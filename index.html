@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>名古屋</title>
+	<meta name="description" content="初心者を全力応援するYouTubeチャンネル「Webの神様」です。">
+	<meta name="author" content="株式会社カラフルクローバー">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WJGDSBP');</script>
+</head>
+<style>
+	/*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    line-height:1;
+}
+
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+/* change colours to suit your needs */
+mark {
+    background-color:#ff9;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+/* change border colour to suit your needs */
+hr {
+    display:block;
+    height:1px;
+    border:0;  
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+header h1 {
+	max-width: 767px;
+    height: 85px;
+    margin: 0 10px;
+    padding-left: 35px;
+    background-color: #000;
+    font-size: 18px;
+    color: #fff;
+    line-height: 80px;
+	font-family: 'Hiragino Kaku Gothic Pro',sans-serif;
+}
+
+/* ハンバーガーメニュー */
+#hamburger {
+        opacity: 0;
+        position: fixed;
+    }
+
+    label .burger {
+        position: fixed;
+        top: 1.6rem;
+        right: 1rem;
+        z-index: 3;
+        width: 1.5rem;
+        height: 1.6rem;
+    }
+
+    label .burger::before,
+    label .burger::after,
+    label .burger .bar {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 0.25rem;
+        border-radius: 5px;
+        background-color: #808080;
+        content: "";
+        transition: all 0.5s;
+    }
+
+    label .burger::before {
+        top: 0;
+        transform-origin: top right; /* /起点を固定させる(起点右上) */
+    }
+
+    label .burger::after {
+        bottom: 0;
+        transform-origin: bottom right; /* /起点を固定させる(起点右下) */
+    }
+
+    label .burger .bar {
+        top: 45%;
+    }
+
+    #menu {
+		width: 10%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    #menu::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        width: 43rem;
+		background-color:rgba(255,255,255,0.9);
+        content: "";
+        transform: skewX(0deg) translateX(100%);
+        transform-origin: bottom right;
+        transition: transform 0.8s;
+    }
+
+    #menu a {
+        margin: 1.3rem -350px;
+        padding: 0.2rem 2.0rem;
+        font-size: 1.3rem;
+		font-family: 'Hiragino Kaku Gothic Pro',sans-serif;
+        color: #808080;
+        text-decoration: none;
+		width: 25rem;
+        transform: translateX(100%);
+        transition: all 0.15s, transform 0.5s;
+        transition-timing-function: cubic-bezier(0.-19, -1, -0.22, -1);
+    }
+
+    #hamburger:checked + label .burger::before,
+    #hamburger:checked + label .burger::after {
+        width: 130%;
+    }
+    #hamburger:checked + label .burger::before {
+        transform: rotate(-45deg);
+		left: -10px;
+    }
+    #hamburger:checked + label .burger::after {
+        transform: rotate(45deg);
+		left: -10px;
+    }
+    #hamburger:checked + label .burger .bar {
+        transform: scale(0);
+    }
+    #hamburger:checked ~ #menu::before {
+        transform: skewX(0deg) translateX(8%);
+    }
+    #hamburger:checked ~ #menu a {
+        transform: translateX(0);
+    }
+    /* /タップされたら黒い背景が出る様にする */
+    #hamburger:checked ~ .light-dark {
+        background: #000;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+/* ハンバーガーメニュー */
+
+
+.container {
+	max-width: 767px;
+	overflow: hidden;
+	margin: 0 10px;
+	font-family: 'Hiragino Kaku Gothic Pro',sans-serif;
+}
+div#head {
+	background-color: #fff;
+	height: 55px;
+}
+div#head p {
+	margin: 30px 28px;
+	font-size: 15px;
+	color: #2C7CFF;
+}
+div#main {
+	position: relative;
+	background-color: #fff;
+	height: 85px;
+	width: calc( 76.5% );
+	float: right;
+}
+div#main::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 1px;
+	background-color: #c0c0c0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+div#main h2 {
+	margin: 26px 20px;
+	font-size: 26px;
+	font-weight: lighter;
+}
+div#main h2 a {
+	text-decoration: none;
+	color: #008000;
+}
+div#main2 {
+	position: relative;
+	background-color: #eee;
+	height: 85px;
+	width: calc( 76.5%);
+	float: right;
+}
+div#main2::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 1px;
+	background-color: #c0c0c0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+div#main2 p:nth-child(1) {
+	margin: 2px;
+	font-size: 10px;
+}
+div#main2 p:nth-child(1) input {
+	width: 15px;
+	font-size: 10px;
+    padding: 0px;
+}
+div#main2 p:nth-child(3) {
+	margin: 0px 10px;
+	font-size: 10px;
+}
+div#main2 p:nth-child(3) input {
+	width: 15px;
+	font-size: 10px;
+    padding: 0px;
+}
+div#main2 p:nth-child(3) a:link, div#main2 p:nth-child(3) a:visited, div#main2 p:nth-child(3) a:hover, div#main2 p:nth-child(3) a:active {
+	color: #008000;
+	text-decoration: none;
+}
+
+div#main2 h4 {
+	margin: 0px 10px;
+	font-size: 15px;
+	font-weight: lighter;
+}
+div#main2 h4 input {
+	width: 15px;
+	font-size: 15px;
+    padding: 0px;
+}
+div#main-transfer {
+	background-color: #fff;
+	height: 85px;
+	width: calc( 76.5%);
+	float: right;
+}
+div#main-transfer h2 {
+	margin: 3px 10px;
+	font-size: 15px;
+	font-weight: lighter;
+}
+div#main-transfer h2 input {
+	width: 200px;
+	font-size: 15px;
+	padding: 2px;
+}
+div#main-transfer p {
+	margin: 0 10px;
+	font-size: 10px;
+}
+div#main-transfer p input {
+	width: 25px;
+	font-size: 10px;
+	padding: 2px;
+}
+.sec01 {background-color: #444;
+	height: 85px;
+	width: calc( 23.5% );
+	float: left;
+	color: #fff;	
+}
+.sec01 h3 {
+	font-size: 10px;
+	font-weight: lighter;
+	margin: 25px 3px;
+}
+.sec01 h3 input[type="time"] {
+    width: 60px;
+    font-size: 10px;
+    padding: 3px;
+}
+.sec02 {
+	position: relative;
+	display: inline-block;
+	background-color: #eee;
+	height: 85px;
+	width: calc( 23.5% );
+	float: left;
+}
+.sec02::after {
+	content: "";
+	display: inline-block;
+	width: 5px;
+	height: 85px;
+	background-color: orangered;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.sec02 p {
+	font-size: 10px;
+}
+.sec02 p:nth-child(1) {
+	margin: 2px 8px;
+}
+.sec02 p:nth-child(1) input {
+	width: 15px;
+    font-size: 10px;
+    padding: 2px;
+}
+.sec02 p:nth-child(2) {
+	margin: 20px 8px;
+}
+.sec02 p:nth-child(2) input {
+	width: 15px;
+    font-size: 10px;
+    padding: 2px;
+}
+.sec03 {
+	background-color: #fff;
+	height: 85px;
+	width: calc( 23.5% );
+	float: left;
+}
+.sec03 h3 {
+	font-size: 18px;
+	font-weight: lighter;
+}
+.sec03 h3:nth-child(1) {
+	margin: 2px 2px;
+}
+.sec03 h3:nth-child(1) input {
+	width: 52px;
+    font-size: 9px;
+    padding: 1.5px;
+}
+.sec03 h3:nth-child(2) {
+	margin: 2px 2px;
+}
+.sec03 h3:nth-child(2) input {
+	width: 52px;
+    font-size: 9px;
+    padding: 1.5px;
+}
+.access {
+	background-color: #eee;
+	color: #0000FF;
+}
+.access::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 1px;
+	background-color: #c0c0c0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.access h2 {
+	padding: 0 10px;
+	font-size: 25px;
+	font-weight: lighter;
+}
+.access h2 input {
+	width: 320px;
+	font-size: 9px;
+	padding: 2px;
+}
+.access h2 a:link, .access h2 a:visited, .access h2 a:hover, .access h2 a:active {
+	color: #008000;
+	text-decoration: none;
+}
+.access p:nth-child(2) {
+	padding: 0px 10px;
+	font-size: 9px;
+}
+.access p:nth-child(2) input {
+	width: 320px;
+	font-size: 9px;
+	padding: 2px;
+}
+.access p:nth-child(2) a:link, .access p:nth-child(2) a:visited, .access p:nth-child(2) a:hover, .access p:nth-child(2) a:active {
+	color: #008000;
+	text-decoration: none;
+}
+.link {
+	background-color: #eee;
+	color: #0000FF;
+}
+.link::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 1px;
+	background-color: #c0c0c0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.link h2 {
+	padding: 0 10px;
+	font-size: 25px;
+	font-weight: lighter;
+}
+.link h2 a {
+	text-decoration: none;
+}
+.link h2 a:link, .link h2 a:visited, .link h2 a:hover, .link h2 a:active {
+	color: #008000;
+}
+.link p:nth-child(3) {
+	padding: 10px 10px 15px;
+	font-size: 14px;
+}
+.link p:nth-child(3) a:link, .link p:nth-child(3) a:visited, .link p:nth-child(3) a:hover, .link p:nth-child(3) a:active {
+	color: #008000;
+	text-decoration: none;
+}
+.link2 {
+	background-color: #fff;
+	color: #0000FF;
+}
+.link2::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 1px;
+	background-color: #c0c0c0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.link2 h2 {
+	padding: 0 10px;
+	font-size: 25px;
+	font-weight: lighter;
+}
+.link2 h2 a {
+	text-decoration: none;
+}
+.link2 h2 a:link, .link2 h2 a:visited, .link2 h2 a:hover, .link2 h2 a:active {
+	color: #008000;
+}
+.link2 p:nth-child(3) {
+	padding: 10px 10px 15px;
+	font-size: 14px;
+	color: #0000FF;
+}
+.link2 p:nth-child(3) a {
+	text-decoration: none;
+}
+.link2 p:nth-child(3) a:link, .link2 p:nth-child(3) a:visited, .link2 p:nth-child(3) a:hover, .link2 p:nth-child(3) a:active {
+	color: #008000;
+	text-decoration: none;
+}
+
+@media (max-width: 2000px) and (min-width: 768px) {
+	div{
+		width: 100%;
+	}
+	label .burger::before,
+    label .burger::after,
+    label .burger .bar {
+		display: none;
+	}
+}
+
+</style>
+<body>
+	<header>
+		<h1>東京</h1>
+		<!-- ハンバーガーメニュー -->
+                    <input type="checkbox" id="hamburger">
+                    <label for="hamburger">
+                        <span class="burger">
+                            <span class="bar"></span>
+                        </span>
+                    </label>
+                    <label class="light-dark" for="hamburger"></label>
+                    <div id="menu">
+                    	<a href="https://www.nagoyajo.city.nagoya.jp/access/">名古屋城</a>
+						<a href="https://www.tokugawaen.aichi.jp/direction/index.html">徳川園</a>
+						<a href="https://tabelog.com/aichi/A2301/A230101/23058422/">味仙 JR名古屋駅店 </a>
+						<a href="https://tabelog.com/aichi/A2301/A230103/23066962/">山本屋総本家 金シャチ横丁店</a>
+						<a href="https://tabelog.com/aichi/A2301/A230103/23066965/">矢場とん 名古屋城 金シャチ横丁店</a>
+			            <a href="https://nagoya-shimin.hall-info.jp/kaikan/facility/forest_hall.html">フォレストホール</a>
+                    </div>
+		<!-- ハンバーガーメニュー -->
+	</header>
+    <div id="container-wrapper">
+        <div class="container">
+            <div id="head">
+                <p>
+                    <input type="number" placeholder="00" style="font-size:13px; width:40px;">
+                    <span style="font-size:10px;">分</span>&nbsp;
+                    <input type="number" placeholder="000" style="font-size:13px; width:80px;">
+                    <span style="font-size:10px;">円</span>&nbsp;<span style="font-size:10px;">乗換</span>
+                    <input type="number" placeholder="0" style="font-size:13px; width:25px;">
+                    <span style="font-size:10px;">回</span>
+                </p>
+            </div>
+ 
+            <div id="main">
+                <h2><input type="text" placeholder="◯◯"><span style="font-size:10px;">駅</span></h2>
+            </div>
+ 
+            <div class="sec01">
+                <h3><input type="time" placeholder="07:23"><span style="font-size:10px;">発</span></h3>
+            </div>
+ 
+            <div id="main2">
+                <p><input type="text" placeholder="◯" style="width:30px;"><span style="font-size:10px;">分</span>&nbsp;&nbsp;<input type="number" placeholder="000" style="width:30px;"><span style="font-size:10px;">円</span></p>
+                <h4><input type="text" placeholder="◯◯" style="width:200px;"><span style="font-size:10px;">線</span></h4>
+                <p><input type="text" placeholder="◯◯方面" style="width:200px;"></p>
+            </div>
+ 
+            <div class="sec02">
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+            </div>
+
+            <div id="main-transfer">
+                <h2><input type="text" placeholder="⚪︎⚪︎" style="width:200px;"><span style="font-size:10px;">駅</span></h2>
+                <p><input type="text" placeholder="00" style="width:30px;"><span style="font-size:10px;">分</span></p>
+            </div>
+         
+            <div class="sec03">
+                <h3><input type="time" placeholder="07:25"><span style="font-size:10px;">着</span></h3>
+                <h3><input type="time" placeholder="07:30"><span style="font-size:10px;">発</span></h3>
+            </div>
+         
+            <div id="main2">
+                <p><input type="text" placeholder="◯" style="width:30px;"><span style="font-size:10px;">分</span>&nbsp;&nbsp;<input type="number" placeholder="000" style="width:30px;"><span style="font-size:10px;">円</span></p>
+                <h4><input type="text" placeholder="◯◯" style="width:200px;"><span style="font-size:10px;">線</span></h4>
+                <p><input type="text" placeholder="◯◯方面" style="width:200px;"></p>
+            </div>
+         
+            <div class="sec02">
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+            </div>
+         
+            <div id="main">
+                <h2><input type="text" placeholder="◯◯"><span style="font-size:10px;">駅</span></h2>
+            </div>
+         
+            <div class="sec01">
+                <h3><input type="time" placeholder="07:23"><span style="font-size:10px;">着</span></h3>
+            </div>
+         
+            <div class="access">
+                <h2><input type="text" placeholder="◯◯→◯◯"><span style="font-size:8px;" style="width:600px;"></span></h2>
+                <p><input type="text" placeholder="◯◯◯より徒歩0分"><span style="font-size:8px;" style="width:600px;"></span></p>
+            </div>
+    </div>
+ 
+    <!-- ボタン部分 -->
+    <button onclick="addHome()">ホームを追加 (最大50回)</button>
+    <button onclick="deleteHome()">ホームを削除</button>
+    <button onclick="saveData()">データを保存</button>
+    <button onclick="loadData()">データを読み込み</button>
+ 
+    <!-- スクリプト部分 -->
+    <script>
+        let homeCount = 1;
+        const maxHomes = 50;
+ 
+        // ホームを追加する関数
+        function addHome() {
+            if (homeCount >= maxHomes) {
+                alert("ホームの追加は最大50回までです。");
+                return;
+            }
+ 
+            const containerWrapper = document.getElementById('container-wrapper');
+            const newHome = document.createElement('div');
+            newHome.className = "container";
+            newHome.innerHTML = `
+            <div id="head">
+                <p>
+                    <input type="number" placeholder="00" style="font-size:13px; width:40px;">
+                    <span style="font-size:10px;">分</span>&nbsp;
+                    <input type="number" placeholder="000" style="font-size:13px; width:80px;">
+                    <span style="font-size:10px;">円</span>&nbsp;<span style="font-size:10px;">乗換</span>
+                    <input type="number" placeholder="0" style="font-size:13px; width:25px;">
+                    <span style="font-size:10px;">回</span>
+                </p>
+            </div>
+ 
+            <div id="main">
+                <h2><input type="text" placeholder="◯◯"><span style="font-size:10px;">駅</span></h2>
+            </div>
+ 
+            <div class="sec01">
+                <h3><input type="time" placeholder="07:23"><span style="font-size:10px;">発</span></h3>
+            </div>
+ 
+            <div id="main2">
+                <p><input type="text" placeholder="◯" style="width:30px;"><span style="font-size:10px;">分</span>&nbsp;&nbsp;<input type="number" placeholder="000" style="width:30px;"><span style="font-size:10px;">円</span></p>
+                <h4><input type="text" placeholder="◯◯" style="width:200px;"><span style="font-size:10px;">線</span></h4>
+                <p><input type="text" placeholder="◯◯方面" style="width:200px;"></p>
+            </div>
+ 
+            <div class="sec02">
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+            </div>
+
+            <div id="main-transfer">
+                <h2><input type="text" placeholder="⚪︎⚪︎" style="width:200px;"><span style="font-size:10px;">駅</span></h2>
+                <p><input type="text" placeholder="00" style="width:30px;"><span style="font-size:10px;">分</span></p>
+            </div>
+         
+            <div class="sec03">
+                <h3><input type="time" placeholder="07:25"><span style="font-size:10px;">着</span></h3>
+                <h3><input type="time" placeholder="07:30"><span style="font-size:10px;">発</span></h3>
+            </div>
+         
+            <div id="main2">
+                <p><input type="text" placeholder="◯" style="width:30px;"><span style="font-size:10px;">分</span>&nbsp;&nbsp;<input type="number" placeholder="000" style="width:30px;"><span style="font-size:10px;">円</span></p>
+                <h4><input type="text" placeholder="◯◯" style="width:200px;"><span style="font-size:10px;">線</span></h4>
+                <p><input type="text" placeholder="◯◯方面" style="width:200px;"></p>
+            </div>
+         
+            <div class="sec02">
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+                <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番</span></p>
+            </div>
+         
+            <div id="main">
+                <h2><input type="text" placeholder="◯◯"><span style="font-size:10px;">駅</span></h2>
+            </div>
+         
+            <div class="sec01">
+                <h3><input type="time" placeholder="07:23"><span style="font-size:10px;">着</span></h3>
+            </div>
+         
+            <div class="access">
+                <h2><input type="text" placeholder="◯◯→◯◯"><span style="font-size:8px;" style="width:600px;"></span></h2>
+                <p><input type="text" placeholder="◯◯◯より徒歩0分"><span style="font-size:8px;" style="width:600px;"></span></p>
+            </div>
+            `;
+            containerWrapper.appendChild(newHome);
+            homeCount++;
+        }
+ 
+        // データを保存する関数
+        function saveData() {
+            const containers = document.querySelectorAll('.container');
+            let data = [];
+ 
+            containers.forEach(container => {
+                const inputs = container.querySelectorAll('input');
+                let containerData = [];
+                inputs.forEach(input => {
+                    containerData.push(input.value); // 各入力フィールドの値を保存
+                });
+                data.push(containerData);
+            });
+ 
+            localStorage.setItem('savedData', JSON.stringify(data));
+            alert('データが保存されました。');
+        }
+
+        // データを削除する関数
+
+        function deleteHome(index) {
+            let homes = JSON.parse(localStorage.getItem('homes')) || [];
+            homes.splice(index, 1); // 指定したホームを削除
+            localStorage.setItem('homes', JSON.stringify(homes)); // 保存
+            loadHomes(); // ホームリストを再読み込み
+        }
+ 
+        // データを読み込む関数
+        function loadData() {
+            const savedData = localStorage.getItem('savedData');
+            if (!savedData) {
+                alert('保存されたデータがありません。');
+                return;
+            }
+ 
+            const data = JSON.parse(savedData);
+            const containerWrapper = document.getElementById('container-wrapper');
+            containerWrapper.innerHTML = ''; // 現在のフォームをクリア
+ 
+            homeCount = 0;
+            data.forEach(containerData => {
+                const newHome = document.createElement('div');
+                newHome.className = "container";
+                let innerHTML = `
+                <div id="head">
+                    <p>
+                        <input type="number" placeholder="10" style="font-size:13px; width:40px;">
+                        <span style="font-size:10px;">分</span>&nbsp;
+                        <input type="number" placeholder="170" style="font-size:13px; width:80px;">
+                        <span style="font-size:10px;">円</span>&nbsp;<span style="font-size:10px;">乗換</span>
+                        <input type="number" placeholder="1" style="font-size:13px; width:25px;">
+                        <span style="font-size:10px;">回</span>
+                    </p>
+                </div>
+                <div id="main">
+                    <h2><input type="text" placeholder="◯◯"><span style="font-size:10px;">駅</span></h2>
+                </div>
+                <div class="sec01">
+                    <h3><input type="time" placeholder="07:23"><span style="font-size:10px;">発</span></h3>
+                </div>
+                <div id="main2">
+                    <p><input type="text" placeholder="◯" style="width:30px;"><span style="font-size:10px;">分</span>&nbsp;&nbsp;<input type="number" placeholder="160" style="width:30px;"><span style="font-size:10px;">円</span></p>
+                    <h4><input type="text" placeholder="◯◯" style="width:200px;"><span style="font-size:10px;">線</span></h4>
+                    <p><input type="text" placeholder="◯◯方面" style="width:200px;"></p>
+                </div>
+                <div class="sec02">
+                    <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番ホーム</span></p>
+                    <p><input type="text" placeholder="0" style="width:30px;"><span style="font-size:10px;">番ホーム</span></p>
+                </div>
+                <div id="main-transfer">
+                <h2><input type="text" value="大阪" style="font-size:20px;"></h2>
+                <p><input type="text" value="5分" style="width:50px;"></p>
+            </div>
+         
+            <div class="sec03">
+                <h3><input type="time" value="07:25"><span style="font-size:10px;">着</span></h3>
+                <h3><input type="time" value="07:30"><span style="font-size:10px;">発</span></h3>
+            </div>
+         
+            <div id="main2">
+                <p><input type="text" value="3分" style="width:50px;"></p>
+                <h4><input type="text" value="JR京都線快速" style="width:200px;"></h4>
+                <p><input type="text" value="近江塩津行" style="width:200px;"></p>
+            </div>
+         
+            <div class="sec02">
+                <p><input type="text" value="8番ホーム" style="width:100px;"></p>
+                <p><input type="text" value="5番ホーム" style="width:100px;"></p>
+            </div>
+         
+            <div id="main">
+                <h2><input type="text" value="新大阪" style="font-size:20px;"></h2>
+            </div>
+         
+            <div class="sec01">
+                <h3><input type="time" value="07:33"><span style="font-size:10px;">着</span></h3>
+            </div>
+         
+            <div class="access">
+                <p>&nbsp;&nbsp;</p>
+                <h2><input type="text" value="JR新大阪 → 新幹線ホームへ" style="width:300px;"></h2>
+                <p><input type="text" value="新大阪駅下車 徒歩5,6分 21分" style="width:300px;"></p>
+            </div>
+                `;
+                newHome.innerHTML = innerHTML;
+                containerWrapper.appendChild(newHome);
+                homeCount++;
+            });
+ 
+            alert('データが読み込まれました。');
+        }
+    </script>
+
+
+
+ 
+
+
+
+         <!DOCTYPE html>
+         <html lang="ja">
+         <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>ホーム追加・保存・読み込み</title>
+            <style>
+                input[type="text"], input[type="number"], input[type="time"] {
+                    width: 150px;
+                    padding: 5px;
+                    margin: 5px;
+                }
+                .container {
+                    margin-bottom: 20px;
+                }
+            </style>
+         </head>
+         <body>
+            
+
+
+         </body>
+         </html>
+         
+    
