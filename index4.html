@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>音声録音と文字起こし (MP3)</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 20px;
+       }
+       #recordingsList {
+           margin-top: 20px;
+       }
+       .recording-item {
+           border: 1px solid #ccc;
+           padding: 10px;
+           margin-bottom: 10px;
+       }
+   </style>
+</head>
+<body>
+
+   <h1>音声録音と文字起こし (MP3)</h1>
+   <button id="startRecord">録音開始</button>
+   <button id="stopRecord" disabled>録音停止</button>
+   <p id="status">ステータス: 停止中</p>
+
+   <div id="recordingsList">
+       <h2>保存された録音</h2>
+   </div>
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.0/lame.min.js"></script>
+   <script>
+       const startRecordButton = document.getElementById('startRecord');
+       const stopRecordButton = document.getElementById('stopRecord');
+       const statusDisplay = document.getElementById('status');
+       const recordingsList = document.getElementById('recordingsList');
+
+       let mediaRecorder;
+       let audioChunks = [];
+       let transcription = "";
+       let recognition;
+
+       if ('webkitSpeechRecognition' in window) {
+           recognition = new webkitSpeechRecognition();
+       } else if ('SpeechRecognition' in window) {
+           recognition = new SpeechRecognition();
+       } else {
+           alert("このブラウザは音声認識をサポートしていません。");
+       }
+
+       if (recognition) {
+           recognition.lang = "en-US";  // 言語を英語に設定
+           recognition.continuous = true;
+           recognition.interimResults = true;
+
+           recognition.onresult = (event) => {
+               transcription = Array.from(event.results)
+                                   .map(result => result[0].transcript)
+                                   .join('');
+               statusDisplay.textContent = `Transcription: ${transcription}`;
+           };
+       }
+
+       startRecordButton.addEventListener('click', async () => {
+           if (!recognition || !navigator.mediaDevices) {
+               alert("お使いのブラウザは録音または音声認識をサポートしていません。");
+               return;
+           }
+
+           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+           mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+
+           audioChunks = [];
+           transcription = "";
+
+           mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+           mediaRecorder.start();
+           recognition.start();
+
+           statusDisplay.textContent = "録音中...";
+           startRecordButton.disabled = true;
+           stopRecordButton.disabled = false;
+       });
+
+       stopRecordButton.addEventListener('click', () => {
+           mediaRecorder.stop();
+           recognition.stop();
+
+           mediaRecorder.onstop = async () => {
+               const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+               const arrayBuffer = await audioBlob.arrayBuffer();
+               const mp3Blob = await convertToMp3(arrayBuffer);
+               const audioUrl = URL.createObjectURL(mp3Blob);
+               saveRecording(audioUrl, transcription);
+
+               startRecordButton.disabled = false;
+               stopRecordButton.disabled = true;
+               statusDisplay.textContent = "停止中";
+           };
+       });
+
+       async function convertToMp3(arrayBuffer) {
+           const wav = lamejs.WavHeader.readHeader(new DataView(arrayBuffer));
+           const samples = new Int16Array(arrayBuffer, wav.dataOffset, wav.dataLen / 2);
+           const mp3Encoder = new lamejs.Mp3Encoder(1, wav.sampleRate, 128);
+           const mp3Data = [];
+
+           let remaining = samples.length;
+           const maxSamples = 1152;
+
+           for (let i = 0; remaining >= maxSamples; i += maxSamples) {
+               const mono = samples.subarray(i, i + maxSamples);
+               const mp3buf = mp3Encoder.encodeBuffer(mono);
+               if (mp3buf.length > 0) {
+                   mp3Data.push(mp3buf);
+               }
+               remaining -= maxSamples;
+           }
+
+           const mp3buf = mp3Encoder.flush();
+           if (mp3buf.length > 0) {
+               mp3Data.push(mp3buf);
+           }
+
+           return new Blob(mp3Data, { type: 'audio/mp3' });
+       }
+
+       function saveRecording(audioUrl, transcriptionText) {
+           const recordingItem = document.createElement('div');
+           recordingItem.className = 'recording-item';
+
+           const audio = document.createElement('audio');
+           audio.src = audioUrl;
+           audio.controls = true;
+
+           const text = document.createElement('p');
+           text.textContent = `Transcription: ${transcriptionText}`;
+
+           const downloadLink = document.createElement('a');
+           downloadLink.href = audioUrl;
+           downloadLink.download = `recording_${Date.now()}.mp3`;  // ダウンロード用のファイル名を指定
+           downloadLink.textContent = "Download Recording";
+
+           recordingItem.appendChild(audio);
+           recordingItem.appendChild(text);
+           recordingItem.appendChild(downloadLink);
+
+           recordingsList.appendChild(recordingItem);
+       }
+   </script>
+
+</body>
+</html>
