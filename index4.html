@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Audio recording</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 20px;
+       }
+       #recordingsList {
+           margin-top: 20px;
+       }
+       .recording-item {
+           border: 1px solid #ccc;
+           padding: 10px;
+           margin-bottom: 10px;
+       }
+   </style>
+</head>
+<body>
+
+   <h1>Audio recording</h1>
+   <button id="startRecord">Start recording</button>
+   <button id="stopRecord" disabled>Stop recording</button>
+   <p id="status">Status: Down</p>
+
+   <div id="recordingsList">
+       <h2>Saved Recordings</h2>
+   </div>
+
+   <script>
+       const startRecordButton = document.getElementById('startRecord');
+       const stopRecordButton = document.getElementById('stopRecord');
+       const statusDisplay = document.getElementById('status');
+       const recordingsList = document.getElementById('recordingsList');
+
+       let mediaRecorder;
+       let audioChunks = [];
+       let transcription = "";
+       let recognition;
+
+       if ('webkitSpeechRecognition' in window) {
+           recognition = new webkitSpeechRecognition();
+       } else if ('SpeechRecognition' in window) {
+           recognition = new SpeechRecognition();
+       } else {
+           alert("このブラウザは音声認識をサポートしていません。");
+       }
+
+       if (recognition) {
+           recognition.lang = "en-US";
+           recognition.continuous = true;
+           recognition.interimResults = true;
+
+           recognition.onresult = (event) => {
+               transcription = Array.from(event.results)
+                                   .map(result => result[0].transcript)
+                                   .join('');
+               statusDisplay.textContent = `Transcription in progress: ${transcription}`;
+           };
+       }
+
+       startRecordButton.addEventListener('click', async () => {
+           if (!recognition || !navigator.mediaDevices) {
+               alert("お使いのブラウザは録音または音声認識をサポートしていません。");
+               return;
+           }
+
+           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+           mediaRecorder = new MediaRecorder(stream);
+
+           audioChunks = [];
+           transcription = "";
+
+           mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+           mediaRecorder.start();
+           recognition.start();
+
+           statusDisplay.textContent = "Recording...";
+           startRecordButton.disabled = true;
+           stopRecordButton.disabled = false;
+       });
+
+       stopRecordButton.addEventListener('click', () => {
+           mediaRecorder.stop();
+           recognition.stop();
+
+           mediaRecorder.onstop = () => {
+               const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+               const audioUrl = URL.createObjectURL(audioBlob);
+               saveRecording(audioUrl, transcription);
+
+               startRecordButton.disabled = false;
+               stopRecordButton.disabled = true;
+               statusDisplay.textContent = "Suspended";
+           };
+       });
+
+       function saveRecording(audioUrl, transcriptionText) {
+           const recordingItem = document.createElement('div');
+           recordingItem.className = 'recording-item';
+
+           const audio = document.createElement('audio');
+           audio.src = audioUrl;
+           audio.controls = true;
+
+           const text = document.createElement('p');
+           text.textContent = `Transcripton: ${transcriptionText}`;
+
+           recordingItem.appendChild(audio);
+           recordingItem.appendChild(text);
+
+           recordingsList.appendChild(recordingItem);
+       }
+   </script>
+
+</body>
+</html>
