@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英語独り言トレーナー</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .category {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .phrase {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+    }
+    .japanese {
+      display: none;
+      margin-top: 5px;
+      color: #444;
+    }
+    .controls button, .controls input[type=range] {
+      margin: 5px 10px 5px 0;
+    }
+    .responsive {
+      max-width: 800px;
+      margin: auto;
+    }
+    audio {
+      display: block;
+      margin-top: 10px;
+    }
+    .score {
+      color: green;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .controls button,
+      .controls input[type=range] {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="responsive">
+  <h1>英語独り言トレーナー</h1>
+
+  <label for="rate">スピード: <span id="rate-value">1</span>x</label>
+  <input type="range" min="0.3" max="1" step="0.1" value="1" id="rate" onchange="updateRate()">
+
+  <div id="app"></div>
+</div>
+
+<script>
+const phrases = {
+  '家で使う日常会話': [
+    { en: "I wonder what’s on TV now.", ja: "今テレビ何やってるかな？" },
+    { en: "What should I eat for dinner today?", ja: "今日の夕飯何食べようかな？" },
+    { en: "There’s a cup on the desk.", ja: "机の上にコップがある。" },
+  ],
+  '英語勉強・レッスンフレーズ集': [
+    { en: "I’ll practice my pronunciation today too.", ja: "今日も発音練習しよ。" },
+    { en: "Oh! I have to listen to Radio Eikaiwa.", ja: "あ！ラジオ英会話聞かなきゃ。" },
+    { en: "I’ll watch English Communication 1.", ja: "英語コミニケーション１見よっと。" },
+  ],
+  '野球観戦に口にしそうな表現': [
+    { en: "I wonder if there’s a professional baseball game today.", ja: "今日はプロ野球やってるかな？" },
+    { en: "Are the Hanshin Tigers winning today?", ja: "今日、阪神タイガース勝ってる？" },
+    { en: "Did Shohei Ohtani hit a homer today?", ja: "今日、大谷翔平ホームラン打った？" },
+  ]
+};
+
+let currentRate = 1;
+let mediaRecorder;
+let recordings = {};
+let currentStream = null;
+let preferredVoice = null;
+
+function updateRate() {
+  const rateSlider = document.getElementById('rate');
+  currentRate = parseFloat(rateSlider.value);
+  document.getElementById('rate-value').textContent = currentRate;
+
+  document.querySelectorAll('input[type=range][id^=rate-]').forEach(slider => {
+    slider.value = currentRate;
+    const label = slider.previousElementSibling.querySelector('span');
+    if (label) label.textContent = currentRate;
+  });
+}
+
+function speak(text, rate = currentRate) {
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = rate;
+  utterance.pitch = 1.0;
+  utterance.voice = preferredVoice || speechSynthesis.getVoices().find(v =>
+    v.lang === 'en-US' && /female|Samantha|Google US English/i.test(v.name)
+  );
+  speechSynthesis.speak(utterance);
+}
+
+function toggleTranslation(button) {
+  const p = button.parentElement.querySelector('.japanese');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+
+async function startRecording(key) {
+  try {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+    }
+
+    currentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(currentStream);
+    recordings[key] = [];
+    mediaRecorder.ondataavailable = e => recordings[key].push(e.data);
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordings[key], { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById(`audio-${key}`).src = url;
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+    };
+    mediaRecorder.start();
+  } catch (e) {
+    alert("録音に失敗しました。\n\n【対処法】\n・iPhoneをご使用の場合、Safariを使ってください。\n・マイクの使用を許可してください（設定 > Safari > マイク）\n\nエラー内容: " + e.message);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+}
+
+function checkPronunciationAI(text, key) {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert('このブラウザでは音声認識がサポートされていません。');
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = (event) => {
+    const spokenText = event.results[0][0].transcript.trim().toLowerCase();
+    const targetText = text.trim().toLowerCase();
+
+    const spokenWords = spokenText.split(' ');
+    const targetWords = targetText.split(' ');
+    const results = targetWords.map(word => ({
+      word,
+      correct: spokenWords.includes(word)
+    }));
+
+    const correctCount = results.filter(r => r.correct).length;
+    const score = Math.round((correctCount / targetWords.length) * 100);
+
+    const scoreDiv = document.getElementById(`score-${key}`);
+    const resultHtml = results.map(r =>
+      `<span style="color:${r.correct ? 'green' : 'red'}">${r.word}</span>`
+    ).join(' ');
+
+    const resultBlock = `<div>AI評価: ${score}/100<br>結果: ${resultHtml}</div>`;
+    scoreDiv.innerHTML += resultBlock + '<hr>';
+  };
+
+  recognition.onerror = (event) => {
+    alert('音声認識中にエラーが発生しました: ' + event.error);
+  };
+
+  recognition.start();
+}
+
+function createUI() {
+  const app = document.getElementById('app');
+  for (const category in phrases) {
+    const div = document.createElement('div');
+    div.className = 'category';
+    const h2 = document.createElement('h2');
+    h2.textContent = category;
+    div.appendChild(h2);
+
+    phrases[category].forEach((phrase, index) => {
+      const id = `${category}-${index}`.replace(/\s+/g, '-');
+      const phraseDiv = document.createElement('div');
+      phraseDiv.className = 'phrase';
+      phraseDiv.innerHTML = `
+        <p><strong>${index + 1}. ${phrase.en}</strong></p>
+        <button onclick="toggleTranslation(this)">日本語表示/非表示</button>
+        <p class="japanese">${phrase.ja}</p>
+        <div class="controls">
+          <button onclick="speak('${phrase.en.replace(/'/g, "\\'")}', currentRate)">発音再生</button>
+          <label for="rate-${id}">速度: <span>${currentRate}</span>x</label>
+          <input type="range" id="rate-${id}" min="0.3" max="1" step="0.1" value="${currentRate}" onchange="
+            currentRate = parseFloat(this.value); 
+            this.previousElementSibling.querySelector('span').textContent = this.value;
+            document.getElementById('rate').value = this.value;
+            document.getElementById('rate-value').textContent = this.value;
+          ">
+          <button onclick="startRecording('${id}')">録音開始</button>
+          <button onclick="stopRecording()">録音終了</button>
+          <audio id="audio-${id}" controls></audio>
+          <button onclick="checkPronunciationAI('${phrase.en.replace(/'/g, "\\'")}', '${id}')">発音チェック（AI）</button>
+          <div class="score" id="score-${id}"></div>
+        </div>
+      `;
+      div.appendChild(phraseDiv);
+    });
+    app.appendChild(div);
+  }
+}
+
+function waitForVoicesThenCreateUI() {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length) {
+    preferredVoice = voices.find(v => v.name.includes("Samantha") || v.name.includes("Google US English"))
+                   || voices.find(v => v.lang === "en-US");
+    createUI();
+  } else {
+    setTimeout(waitForVoicesThenCreateUI, 200);
+  }
+}
+
+waitForVoicesThenCreateUI();
+</script>
+</body>
+</html>
