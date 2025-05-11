@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英語独り言トレーナー</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .category {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .phrase {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+    }
+    .japanese {
+      display: none;
+      margin-top: 5px;
+      color: #444;
+    }
+    .controls button, .controls input[type=range] {
+      margin: 5px 10px 5px 0;
+    }
+    .responsive {
+      max-width: 800px;
+      margin: auto;
+    }
+    audio {
+      display: block;
+      margin-top: 10px;
+    }
+    .score {
+      color: green;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .controls button,
+      .controls input[type=range] {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="responsive">
+  <h1>英語独り言トレーナー</h1>
+
+  <label for="rate">スピード: <span id="rate-value">1</span>x</label>
+  <input type="range" min="0.3" max="1" step="0.1" value="1" id="rate" onchange="updateRate()">
+
+  <div id="app"></div>
+</div>
+
+<script>
+const phrases = {
+  '家で使う日常会話': [
+    { en: "I wonder what’s on TV now.", ja: "今テレビ何やってるかな？" },
+    { en: "What should I eat for dinner today?", ja: "今日の夕飯何食べようかな？" },
+    { en: "There’s a cup on the desk.", ja: "机の上にコップがある。" },
+    { en: "I’m gonna have some coffee.", ja: "コーヒー飲もうと。" },
+    { en: "Maybe I’ll make some coffee.", ja: "コーヒーでも作ろうかな？" },
+    { en: "Maybe I’ll play the guitar.", ja: "ギターでも弾こうかな。" },
+    { en: "Wash the dishes, please.", ja: "食器洗ってや。" },
+    { en: "I’ll wash the dishes.", ja: "食器洗おう。" },
+    { en: "I’m gonna watch YouTube.", ja: "ユーチューブ見ようと。" },
+    { en: "This show is fun.", ja: "この番組面白い。" },
+    { en: "This YouTube channel is fun.", ja: "このYouTubeチャンネル面白い。" },
+    { en: "This YouTube channel is boring.", ja: "このYouTubeチャンネルつまんない。" },
+    { en: "I don’t know how to find a channel I want to watch.", ja: "見たいチャンネルの探し方が分からない。" },
+    { en: "Make some tea, please.", ja: "あなたお茶作ってや。" },
+    { en: "I’ll make some tea.", ja: "お茶作ろうっと。" },
+    { en: "I have work tomorrow...", ja: "明日は仕事かぁ。" },
+    { en: "Finally, a day off tomorrow!", ja: "明日やっと仕事休みだ。" },
+    { en: "This drink is so good!", ja: "このお酒美味い！" },
+    { en: "This food is really good!", ja: "この料理美味い！" },
+    { en: "I’m super sleepy.", ja: "めっちゃ眠たい。" },
+    { en: "Maybe I’ll take a nap.", ja: "昼寝しようかな？" },
+    { en: "I want to eat Chinese food.", ja: "中華料理食べたい。" },
+    { en: "I want to eat udon.", ja: "うどん食べたい。" },
+    { en: "I feel like having sushi for a change.", ja: "たまには寿司食べたいなぁ。" },
+    { en: "I’ll do the laundry.", ja: "洗濯しよっと。" },
+    { en: "I'm too lazy to do laundry.", ja: "洗濯するのめんどくさい。" },
+    { en: "I’ll clean the room.", ja: "掃除しよ。" },
+    { en: "I'm too lazy to clean right now.", ja: "掃除するのめんどくさい。" },
+    { en: "I’ll brush my teeth.", ja: "歯磨きしよ。" },
+    { en: "I’ll take a bath.", ja: "お風呂入ろ。" },
+    { en: "I feel fresh after the bath.", ja: "お風呂入ってすっきりした。" },
+    { en: "I’ll shave.", ja: "ヒゲ剃ろう。" },
+    { en: "I need to shave.", ja: "ヒゲ剃らないと。" },
+    { en: "It’s less than 20 degrees today.", ja: "今日はの気温は20度ないなぁ。" },
+    { en: "It’s 23 degrees today.", ja: "今日の気温は２３度だ。" },
+    { en: "What’s the temperature now?", ja: "今、気温何度？" },
+    { en: "What’s the weather like today?", ja: "今日の天気は？" },
+    { en: "I hope it stays sunny all day.", ja: "今日、一日晴れたらいいなぁ。" },
+    { en: "It’s sunny today.", ja: "今日は晴れだ。" },
+    { en: "The sun came out.", ja: "晴れてきた。" },
+    { en: "Nice weather.", ja: "いい天気だ。" },
+    { en: "It’s cloudy now.", ja: "今曇りだ。" },
+    { en: "It’s cloudy today.", ja: "今日は曇りだ。" },
+    { en: "It’s raining now.", ja: "今雨降ってる。" },
+    { en: "It’s rainy today.", ja: "今日は雨だ。" },
+    { en: "It’s raining hard.", ja: "めっちゃ雨降ってる。" },
+    { en: "It’s drizzling a bit.", ja: "パラっと雨降ってる。" },
+    { en: "It’s snowing now. That doesn’t happen often.", ja: "今珍しく雪降ってる。" },
+    { en: "I'm writing down some phrases I can use.", ja: "使える言葉を書いてる。" },
+  ],
+  '英語勉強・レッスンフレーズ集': [
+    { en: "I’ll practice my pronunciation today too.", ja: "今日も発音練習しよ。" },
+    { en: "Oh! I have to listen to Radio Eikaiwa.", ja: "あ！ラジオ英会話聞かなきゃ。" },
+    { en: "I’ll watch English Communication 1.", ja: "英語コミニケーション１見よっと。" },
+    { en: "I’ll watch an English show.", ja: "英語の番組見よっと。" },
+    { en: "I’ll practice saying it many times.", ja: "何回も発音練習するぞ。" },
+    { en: "I forgot to practice pronunciation.", ja: "発音練習するの忘れてた。" },
+    { en: "I forgot to listen to Radio Eikaiwa.", ja: "ラジオ英会話聞くの忘れてた。" },
+    { en: "I’ll practice with Shadow Me.", ja: "Shadow Meで発音練習しよ。" },
+    { en: "I practiced a lot today.", ja: "今日は発音練習いっぱいした。" },
+    { en: "Pronunciation is hard.", ja: "発音むすがしい。" },
+    { en: "I don’t know what that word was.", ja: "今の単語なんて言ってるのか分からない。" },
+    { en: "I don’t understand what that word means yet.", ja: "今の言葉と意味が自分はまだ分かってないです。" },
+    { en: "Oh, I see! That’s what it means.", ja: "なるほどそういう意味なんだ。" },
+    { en: "How should I answer in that case?", ja: "その場合どう答えたらいいのですか？" },
+    { en: "What does that mean?", ja: "どういう意味ですか？" },
+    { en: "What did you do today?", ja: "今日は何してましたか？" },
+    { en: "What did you do last weekend?", ja: "先週末何してましたか？" },
+    { en: "What will you do this weekend?", ja: "今週末何しますか？" },
+    { en: "I think I said what I wanted to in today’s lesson.", ja: "今日のレッスンで言いたい事は言えたと思います。" },
+    { en: "I think I’m still not good at listening.", ja: "自分は聞き取りがまだだと思います。" },
+    { en: "I think I can understand what people say, but I still can’t answer well after that.", ja: "その後の返事がまだ出来てないと思います。" },
+  ],
+  '野球観戦に口にしそうな表現': [
+    { en: "I wonder if there’s a professional baseball game today.", ja: "今日はプロ野球やってるかな？" },
+    { en: "Are the Hanshin Tigers winning today?", ja: "今日、阪神タイガース勝ってる？" },
+    { en: "Did Shohei Ohtani hit a homer today?", ja: "今日、大谷翔平ホームラン打った？" },
+    { en: "Come on, get him out!", ja: "頼む抑えてくれ。" },
+    { en: "Come on, get a hit!", ja: "頼む打ってくれ。" },
+    { en: "That ball was a slider.", ja: "今のボールスライダーだ。" },
+    { en: "That ball moved a lot!", ja: "今のボールめっちゃ曲がってた。" },
+    { en: "That pitch was fast!", ja: "今の球速い！" },
+    { en: "That fastball was super fast!", ja: "直球めっちゃ速い！" },
+    { en: "Strikeout!", ja: "三振！" },
+    { en: "Get a strikeout here!", ja: "ここで三振取って！" },
+    { en: "Big hit!", ja: "大きな当たり！" },
+    { en: "That’s a big hit! Get in the stands!", ja: "大きいな当たり、スタンドへ入れ！" },
+    { en: "Big hit — it’s a home run!", ja: "大きな当たりホームラン！" },
+    { en: "Let’s get a double play here!", ja: "ここで、ダブルフレイ取って！" },
+    { en: "They're walking him.", ja: "敬遠だ。" },
+    { en: "Wow, they're giving him the intentional walk here?", ja: "申告敬遠かぁ。（皮肉まじりに）" },
+    { en: "They're just gonna walk him?", ja: "申告敬遠かぁ！（軽く驚いたトーンで）" },
+    { en: "Come on, Ohtani! Shut him down!", ja: "大谷翔平相手打者を抑えて！" },
+    { en: "Come on, Ohtani, Get a hit here!", ja: "大谷翔平ここで打って！" },
+    { en: "Oh no, that was an error.", ja: "あ！エラーした。" },
+    { en: "It’s the bottom of the 5th now.", ja: "今、５回の裏。" },
+    { en: "It’s the top of the 7th now.", ja: "今、７回表。" },
+    { en: "We’re up!", ja: "攻撃中。" },
+    { en: "We’re on defense!", ja: "守備中。" },
+    { en: "The game’s really close today — who knows who will win.", ja: "今日の試合僅差でどうなるか分からない。" },
+    { en: "A big win today! It’s been a while!", ja: "今日は久しぶりに快勝だ！" },
+    { en: "Man, no one's scoring.", ja: "得点入らないなぁ。" },
+    { en: "This game's a pitcher's duel.", ja: "得点入らないなぁ。（投手戦だね）" },
+    { en: "I think Iwasaki is the next pitcher.", ja: "次のピッチャーは、岩崎かな。" },
+    { en: "The pitcher’s changing now.", ja: "ここで、ピッチャー交代だ。" },
+    { en: "They should change the pitcher now.", ja: "ここでピッチャー交代しなきゃ。" },
+    { en: "Damn, he gave up a hit.", ja: "打たれた。（ちょっと悔しいトーン）" },
+    { en: "He got hit!", ja: "打たれた。（一般的）" },
+    { en: "Looks like he might get hit.", ja: "打たれそうな雰囲気。" },
+    { en: "What’s gonna happen?", ja: "どうなる？" },
+    { en: "Here we go...what now?", ja: "どうなる？（ワクワクorハラハラ）" },
+    { en: "Come on, What are you doing?", ja: "何やってるの？" },
+    { en: "Good thing Kirishiki held them!", ja: "桐敷選手抑えてくれて良かった。" },
+    { en: "What’s the score right now?", ja: "今、試合何対何？" },
+  ],
+};
+
+let currentRate = 1;
+let mediaRecorder;
+let recordings = {};
+let currentStream = null;
+let preferredVoice = null;
+
+function updateRate() {
+  const rateSlider = document.getElementById('rate');
+  currentRate = parseFloat(rateSlider.value);
+  document.getElementById('rate-value').textContent = currentRate;
+
+  document.querySelectorAll('input[type=range][id^=rate-]').forEach(slider => {
+    slider.value = currentRate;
+    const label = slider.previousElementSibling.querySelector('span');
+    if (label) label.textContent = currentRate;
+  });
+}
+
+function speak(text, rate = currentRate) {
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = rate;
+  utterance.pitch = 1.0;
+  utterance.voice = preferredVoice || speechSynthesis.getVoices().find(v =>
+    v.lang === 'en-US' && /female|Samantha|Alex/i.test(v.name)
+  );
+  speechSynthesis.speak(utterance);
+}
+
+function toggleTranslation(button) {
+  const p = button.parentElement.querySelector('.japanese');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+
+async function startRecording(key) {
+  try {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+    }
+
+    currentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ?
+      'audio/webm;codecs=opus' :
+      (MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '');
+
+    mediaRecorder = new MediaRecorder(currentStream, mimeType ? { mimeType } : undefined);
+
+    recordings[key] = [];
+    mediaRecorder.ondataavailable = e => recordings[key].push(e.data);
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordings[key], { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById(`audio-${key}`).src = url;
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+      sendToTranscriptionServer(key);
+    };
+    mediaRecorder.start();
+  } catch (e) {
+    alert("録音に失敗しました。\n\n【対処法】\n・iPhoneをご使用の場合、Safariを使ってください。\n・マイクの使用を許可してください（設定 > Safari > マイク）\n\nエラー内容: " + e.message);
+  }
+}
+
+function stopRecording(key) {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+}
+
+// 修正版 AI発音チェック（iPhone Safariは非対応表示）
+function checkPronunciationAI(text, key) {
+  const scoreDiv = document.getElementById(`score-${key}`);
+
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) && !window.MSStream;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  if (isIOS && isSafari) {
+    scoreDiv.innerHTML += `<div style="color: red;">iPhone SafariではAI発音チェック機能は利用できません。</div><hr>`;
+    return;
+  }
+
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert('このブラウザでは音声認識がサポートされていません。');
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  scoreDiv.innerHTML += `<div>🎤 話してください...（AI評価中）</div>`;
+
+  recognition.onresult = (event) => {
+    const spokenText = event.results[0][0].transcript.trim().toLowerCase();
+    const targetText = text.trim().toLowerCase();
+
+    const spokenWords = spokenText.split(' ');
+    const targetWords = targetText.split(' ');
+    const results = targetWords.map(word => ({
+      word,
+      correct: spokenWords.includes(word)
+    }));
+
+    const correctCount = results.filter(r => r.correct).length;
+    const score = Math.round((correctCount / targetWords.length) * 100);
+
+    const resultHtml = results.map(r =>
+      `<span style="color:${r.correct ? 'green' : 'red'}">${r.word}</span>`
+    ).join(' ');
+
+    scoreDiv.innerHTML += `<div>AI評価: ${score}/100<br>結果: ${resultHtml}</div><hr>`;
+  };
+
+  recognition.onerror = (event) => {
+    scoreDiv.innerHTML += `<div style="color:red">音声認識エラー: ${event.error}</div>`;
+  };
+
+  recognition.onend = () => {
+    console.log('Recognition ended');
+  };
+
+  setTimeout(() => recognition.start(), 200);
+}
+
+function createUI() {
+  const app = document.getElementById('app');
+  for (const category in phrases) {
+    const div = document.createElement('div');
+    div.className = 'category';
+    const h2 = document.createElement('h2');
+    h2.textContent = category;
+    div.appendChild(h2);
+
+    phrases[category].forEach((phrase, index) => {
+      const id = `${category}-${index}`.replace(/\s+/g, '-');
+      const phraseDiv = document.createElement('div');
+      phraseDiv.className = 'phrase';
+      phraseDiv.innerHTML = `
+        <p><strong>${index + 1}. ${phrase.en}</strong></p>
+        <button onclick="toggleTranslation(this)">日本語表示/非表示</button>
+        <p class="japanese">${phrase.ja}</p>
+        <div class="controls">
+          <button onclick="speak('${phrase.en.replace(/'/g, "\\'")}', currentRate)">発音再生</button>
+          <label for="rate-${id}">速度: <span>${currentRate}</span>x</label>
+          <input type="range" id="rate-${id}" min="0.3" max="1" step="0.1" value="${currentRate}" onchange="
+            currentRate = parseFloat(this.value); 
+            this.previousElementSibling.querySelector('span').textContent = this.value;
+            document.getElementById('rate').value = this.value;
+            document.getElementById('rate-value').textContent = this.value;
+          ">
+          <button onclick="startRecording('${id}')">録音開始</button>
+          <button onclick="stopRecording('${id}')">録音終了</button>
+          <audio id="audio-${id}" controls></audio>
+          <button onclick="checkPronunciationAI('${phrase.en.replace(/'/g, "\\'")}', '${id}')">発音チェック（AI）</button>
+          <div class="score" id="score-${id}"></div>
+        </div>
+      `;
+      div.appendChild(phraseDiv);
+    });
+    app.appendChild(div);
+  }
+}
+
+function waitForVoicesThenCreateUI() {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length) {
+    preferredVoice = voices.find(v => /Google US English|Samantha|en-US/i.test(v.name))
+                   || voices.find(v => v.lang === "en-US");
+    createUI();
+  } else {
+    setTimeout(waitForVoicesThenCreateUI, 200);
+  }
+}
+
+waitForVoicesThenCreateUI();
+</script>
+
+<script>
+  async function sendToTranscriptionServer(key) {
+    const audioBlob = new Blob(recordings[key], { type: 'audio/webm' });
+    const formData = new FormData();
+    formData.append("audio", audioBlob, "recording.webm");
+
+    try {
+      const response = await fetch("https://english-trainer.yourname.repl.co/transcribe", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.text) {
+        document.getElementById(`score-${key}`).innerHTML += `<div>Whisper認識: ${data.text}</div>`;
+      } else if (data.error) {
+        alert("サーバーエラー: " + data.error);
+      }
+    } catch (err) {
+      alert("通信に失敗しました: " + err.message);
+    }
+  }
+</script>
+</body>
+</html>
