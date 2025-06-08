@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英語独り言トレーナー</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    /* ハンバーガーメニュー */
+    #hamburger {
+        opacity: 0;
+        position: fixed;
+    }
+
+    label .burger {
+        position: fixed;
+        top: 1.6rem;
+        right: 1rem;
+        z-index: 3;
+        width: 1.5rem;
+        height: 1.6rem;
+    }
+
+    label .burger::before,
+    label .burger::after,
+    label .burger .bar {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 0.25rem;
+        border-radius: 5px;
+        background-color: #808080;
+        content: "";
+        transition: all 0.5s;
+    }
+
+    label .burger::before {
+        top: 0;
+        transform-origin: top right; /* /起点を固定させる(起点右上) */
+    }
+
+    label .burger::after {
+        bottom: 0;
+        transform-origin: bottom right; /* /起点を固定させる(起点右下) */
+    }
+
+    label .burger .bar {
+        top: 45%;
+    }
+
+    #menu {
+		width: 10%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    #menu::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        width: 43rem;
+		background-color:rgba(255,255,255,0.9);
+        content: "";
+        transform: skewX(0deg) translateX(100%);
+        transform-origin: bottom right;
+        transition: transform 0.8s;
+    }
+
+    #menu a {
+        margin: 1.3rem -350px;
+        padding: 0.2rem 2.0rem;
+        font-size: 1.3rem;
+		font-family: 'Hiragino Kaku Gothic Pro',sans-serif;
+        color: #808080;
+        text-decoration: none;
+		width: 25rem;
+        transform: translateX(100%);
+        transition: all 0.15s, transform 0.5s;
+        transition-timing-function: cubic-bezier(0.-19, -1, -0.22, -1);
+    }
+
+    #hamburger:checked + label .burger::before,
+    #hamburger:checked + label .burger::after {
+        width: 130%;
+    }
+    #hamburger:checked + label .burger::before {
+        transform: rotate(-45deg);
+		left: -10px;
+    }
+    #hamburger:checked + label .burger::after {
+        transform: rotate(45deg);
+		left: -10px;
+    }
+    #hamburger:checked + label .burger .bar {
+        transform: scale(0);
+    }
+    #hamburger:checked ~ #menu::before {
+        transform: skewX(0deg) translateX(8%);
+    }
+    #hamburger:checked ~ #menu a {
+        transform: translateX(0);
+    }
+    /* /タップされたら黒い背景が出る様にする */
+    #hamburger:checked ~ .light-dark {
+        background: #000;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    /* ハンバーガーメニュー */
+    .category {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .phrase {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+    }
+    .english {
+      display: none;
+      margin-top: 5px;
+      color: #444;
+    }
+    .controls button, .controls input[type=range] {
+      margin: 5px 10px 5px 0;
+    }
+    .responsive {
+      max-width: 800px;
+      margin: auto;
+    }
+    audio {
+      display: block;
+      margin-top: 10px;
+    }
+    .score {
+      color: green;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .controls button,
+      .controls input[type=range] {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="responsive">
+  <h1>ひとりごと</h1>
+  <!-- ハンバーガーメニュー -->
+                    <input type="checkbox" id="hamburger">
+                    <label for="hamburger">
+                        <span class="burger">
+                            <span class="bar"></span>
+                        </span>
+                    </label>
+                    <label class="light-dark" for="hamburger"></label>
+                    <div id="menu">
+                    	<a href=""></a>
+			            
+                    </div>
+		<!-- ハンバーガーメニュー -->
+  <label for="rate">スピード: <span id="rate-value">1</span>x</label>
+  <input type="range" min="0.3" max="1" step="0.1" value="1" id="rate" onchange="updateRate()">
+
+  <div id="app"></div>
+</div>
+
+<script>
+const phrases = {
+  '朝のひとりごと': [
+    { en: "It's 6 o'clock now. It's time to wake up.", ja: "6時だ！起きなきゃ！", audio: "pronunciationlesson001.mp3" },
+    { en: "I can't think about anything. I'm still waking up.", ja: "まだ寝起きで何も考えられない。", audio: "pronunciationlesson002.mp3" },
+    { en: "I was so tired yesterday, and slept through the night.", ja: "昨日本当に疲れていたから昨晩はぐっすり寝れた。", audio: "pronunciationlesson003.mp3" },
+    { en: "Why is it so cold today?", ja: "なんで今日はこんなに寒いのだろう？", audio: "pronunciationlesson004.mp3" },
+    { en: "I wanna stay in my bed.", ja: "ベットの中にずっといたい。", audio: "pronunciationlesson005.mp3" },
+    { en: "I turn on the heater.", ja: "ヒータつけよう。", audio: "pronunciationlesson006.mp3" },
+    { en: "Every morning, I drink some hot water.", ja: "毎朝お湯を飲みます。", audio: "pronunciationlesson007.mp3" },
+    { en: "Let's make some coffee.", ja: "コーヒーを淹れよう", audio: "pronunciationlesson008.mp3" },
+    { en: "I put some milk in my coffee.", ja: "コーヒーにミルクを入れます。", audio: "pronunciationlesson009.mp3" },
+    { en: "I like to drink coffee black.", ja: "コーヒーはブラックで飲みます。", audio: "pronunciationlesson010.mp3" },
+    { en: "What do I want for breakfast?", ja: "朝ご飯は何にしよう？", audio: "pronunciationlesson011.mp3" },
+    { en: "I gotta take shower and get ready for work.", ja: "シャワーを浴びて仕事の準備しなきや。", audio: "pronunciationlesson012.mp3" },
+    { en: "I will bring an umbrella with me today.", ja: "今日は傘を持っていきます。", audio: "pronunciationlesson013.mp3" },
+    { en: "Where is my key? Where did it go?", ja: "鍵がない！！どこいった？", audio: "pronunciationlesson014.mp3" },
+    { en: "I'm running late.", ja: "遅刻しそうだ。", audio: "pronunciationlesson015.mp3" },
+    { en: "Shoot. I forgot to iron my shirt.", ja: "シャツにアイロンかけるの忘れてた！", audio: "pronunciationlesson016.mp3" },
+    { en: "I need to catch the 8 o'clock train.", ja: "8時の電車に乗らなきや。", audio: "pronunciationlesson017.mp3" },
+    { en: "Oops. I totally forgot to shave my beard.", ja: "髭剃るのをすっかりわすれてた。", audio: "pronunciationlesson018.mp3" },
+    { en: "I can't be late for work today.", ja: "今日は絶対に遅れられない。", audio: "pronunciationlesson019.mp3" },
+    { en: "I have to leave now.", ja: "いますぐに家出なくちゃ。", audio: "pronunciationlesson020.mp3" },
+    { en: "I will pick up my kids at 4pm today.", ja: "4時に子供たちを迎えにいく。", audio: "pronunciationlesson021.mp3" },
+    { en: "Today is gonna be a good day.", ja: "今日はいい1日になるぞ！", audio: "pronunciationlesson022.mp3" },
+  ],
+  '昼のひとりごと': [
+    { en: "It's been very busy today.", ja: "今日は忙しい日だ。", audio: "pronunciationlesson101.mp3" },
+    { en: "My presentation in the morning went well. I nailed it!", ja: "今朝のプレゼンすごく上手くいった。やったよ！", audio: "pronunciationlesson102.mp3" },
+    { en: "I'm dehydrated. I need to drink some water.", ja: "喉がカラカラ。水飲まなきゃ。", audio: "pronunciationlesson103.mp3" },
+    { en: "What do I have for this afternoon?", ja: "午後は何があったっけ？", audio: "pronunciationlesson104.mp3" },
+    { en: "I'll take a quick break.", ja: "軽く休憩取ろうっと。", audio: "pronunciationlesson105.mp3" },
+    { en: "What do I feel like to eat?", ja: "何食べようかな。", audio: "pronunciationlesson106.mp3" },
+    { en: "I'm craving for spicy food.", ja: "スパイシーフードが食べたくて仕方ない！", audio: "pronunciationlesson107.mp3" },
+    { en: "I grab some lunch with my coworkers.", ja: "同僚とランチに行く。", audio: "pronunciationlesson108.mp3" },
+    { en: "I talked to my friends about work.", ja: "友達に仕事について話した。", audio: "pronunciationlesson109.mp3" },
+    { en: "I don't know how to use this microwave.", ja: "この電子レンジどうやって使うんだ？", audio: "pronunciationlesson110.mp3" },
+    { en: "I avoid eating too many carbs for lunch.", ja: "お昼はなるべく炭水化物を控える。", audio: "pronunciationlesson111.mp3" },
+    { en: "I gotta make a phone call to my mom.", ja: "お母さんに電話しなきゃ。", audio: "pronunciationlesson112.mp3" },
+    { en: "I'm on my phone while waiting in line.", ja: "列に並びながら携帯を触る。", audio: "pronunciationlesson113.mp3" },
+    { en: "Was there an ATM in this building?", ja: "この建物にATMはあったっけ？", audio: "pronunciationlesson114.mp3" },
+    { en: "During my break, I gotta run to the bank to withdraw some money.", ja: "休憩中に銀行に行ってお金下ろさなきゃ。", audio: "pronunciationlesson115.mp3" },
+    { en: "I want to run some errands during my lunch break.", ja: "休憩中に用事をすませたいな。", audio: "pronunciationlesson116.mp3" },
+    { en: "Let's take the stairs instead of the elevator.", ja: "エレベーターの代わりに階段使おうっと！", audio: "pronunciationlesson117.mp3" },
+    { en: "I will get off my work on time today.", ja: "今日は絶対に定時で上がる。", audio: "pronunciationlesson118.mp3" },
+    { en: "I see a text from my wife.", ja: "奥さんからメッセージだ。", audio: "pronunciationlesson119.mp3" },
+    { en: "Remember to pick up my daughter on my way home.", ja: "娘を帰りに迎えに行くことを忘れない。", audio: "pronunciationlesson120.mp3" },
+  ],
+  '夜のひとりごと': [
+    { en: "Yes! The package is finally here.", ja: "やっと荷物とどいた！", audio: "pronunciationlesson201.mp3" },
+    { en: "It's been a long day. I'm exhausted.", ja: "本当に長い1日だった。もうクタクタ。", audio: "pronunciationlesson202.mp3" },
+    { en: "I wanna lay down for a few.", ja: "少し横になろうっと。", audio: "pronunciationlesson203.mp3" },
+    { en: "Let's take a quick shower first.", ja: "先にシャワー浴びよう。", audio: "pronunciationlesson204.mp3" },
+    { en: "My skin is dry. I need to put on some lotion.", ja: "ローション塗らなきゃ。肌がカサカサだ。", audio: "pronunciationlesson205.mp3" },
+    { en: "I stay away from my work stuff at home.", ja: "お家では仕事のこと考えないようにする。", audio: "pronunciationlesson206.mp3" },
+    { en: "What day is it today?", ja: "今日何曜日だっけ？", audio: "pronunciationlesson207.mp3" },
+    { en: "I'm starving. What should I make for dinner?", ja: "もう腹ペコ。今夜は何作ろうかな。", audio: "pronunciationlesson208.mp3" },
+    { en: "Wow. This chicken came out so good.", ja: "このチキンすごく上手にできた！", audio: "pronunciationlesson209.mp3" },
+    { en: "Phew. I'm stuffed. I'll save the food for later.", ja: "あーお腹いっぱい。残りは後にとっておこう。", audio: "pronunciationlesson210.mp3" },
+    { en: "I'm so lazy to wash the dishes.", ja: "皿洗い面倒臭い。", audio: "pronunciationlesson211.mp3" },
+    { en: "I feel like watching a movie tonight.", ja: "今日は映画が見たい気分。", audio: "pronunciationlesson212.mp3" },
+    { en: "Let's see what's on Netflix.", ja: "ネットフリックスに何かあるか見てみよう。", audio: "pronunciationlesson213.mp3" },
+    { en: "What's going on with my wifi today? The network is super slow.", ja: "今日なんだかWiFiがおかしいな。ネットがすごく遅い。", audio: "pronunciationlesson214.mp3" },
+    { en: "I gotta charge my phone. It's dying.", ja: "携帯充電しないと。", audio: "pronunciationlesson215.mp3" },
+    { en: "Where did I put my phone charger?", ja: "あれ？充電器どこに置いたっけ？", audio: "pronunciationlesson216.mp3" },
+    { en: "It's almost my bedtime. Let's get ready for bed.", ja: "もうそろそろ寝る準備しよう。", audio: "pronunciationlesson217.mp3" },
+    { en: "What time should I wake up tomorrow?", ja: "明日何時に起きようかな。", audio: "pronunciationlesson218.mp3" },
+    { en: "I have two more days to go until my next day off. I got this.", ja: "あと2日で休みだ。頑張ろう。", audio: "pronunciationlesson219.mp3" },
+    { en: "Wait. Did I set my alarm?", ja: "アラームかけたっけ？", audio: "pronunciationlesson220.mp3" },
+    { en: "Did I lock my door? Well, let's go check.", ja: "ドアの鍵閉めたっけ？確認しに行こう。", audio: "pronunciationlesson221.mp3" },
+  ],
+};
+
+let currentRate = 1;
+let mediaRecorder;
+let recordings = {};
+let currentStream = null;
+let preferredVoice = null;
+
+function updateRate() {
+  const rateSlider = document.getElementById('rate');
+  currentRate = parseFloat(rateSlider.value);
+  document.getElementById('rate-value').textContent = currentRate;
+}
+
+function playAudio(file) {
+  const audio = new Audio(file);
+  audio.play();
+}
+
+function speak(text, rate = currentRate) {
+  speechSynthesis.cancel();
+  function play() {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = rate;
+    utterance.pitch = 1.0;
+    utterance.voice = preferredVoice || speechSynthesis.getVoices().find(v => v.lang === 'en-US' && /Google US English/i.test(v.name));
+    speechSynthesis.speak(utterance);
+  }
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.onvoiceschanged = play;
+  } else {
+    play();
+  }
+}
+
+function toggleTranslation(button) {
+  const p = button.parentElement.querySelector('.english');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+
+async function startRecording(key) {
+  try {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    if (currentStream) currentStream.getTracks().forEach(track => track.stop());
+
+    currentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/webm;codecs=opus';
+    mediaRecorder = new MediaRecorder(currentStream, { mimeType });
+    recordings[key] = [];
+
+    mediaRecorder.ondataavailable = event => {
+      if (event.data.size > 0) recordings[key].push(event.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordings[key], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const audio = document.getElementById('playback-' + key);
+      audio.src = url;
+    };
+
+    mediaRecorder.start();
+  } catch (err) {
+    alert("録音に失敗しました: " + err.message);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    if (currentStream) currentStream.getTracks().forEach(track => track.stop());
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  Object.entries(phrases).forEach(([category, items]) => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    const h2 = document.createElement('h2');
+    h2.textContent = category;
+    div.appendChild(h2);
+
+    items.forEach((item, index) => {
+      const p = document.createElement('div');
+      p.className = 'phrase';
+
+      const ja = document.createElement('div');
+      ja.textContent = item.ja;
+      p.appendChild(ja);
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.textContent = '英文表示/非表示';
+      toggleBtn.onclick = function () {
+        toggleTranslation(this);
+      };
+      p.appendChild(toggleBtn);
+
+      const en = document.createElement('div');
+      en.className = 'english';
+      en.textContent = item.en;
+      p.appendChild(en);
+
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
+      const speakBtn = document.createElement('button');
+      speakBtn.textContent = '発音';
+      speakBtn.onclick = () => {
+        if (item.audio) {
+          playAudio(item.audio);
+        } else {
+          speak(item.en);
+        }
+      };
+      controls.appendChild(speakBtn);
+
+      const recordBtn = document.createElement('button');
+      recordBtn.textContent = '録音';
+      recordBtn.onclick = () => startRecording(category + '-' + index);
+      controls.appendChild(recordBtn);
+
+      const stopBtn = document.createElement('button');
+      stopBtn.textContent = '停止';
+      stopBtn.onclick = () => stopRecording();
+      controls.appendChild(stopBtn);
+
+      const playback = document.createElement('audio');
+      playback.controls = true;
+      playback.id = 'playback-' + category + '-' + index;
+      controls.appendChild(playback);
+
+      p.appendChild(controls);
+      div.appendChild(p);
+    });
+
+    app.appendChild(div);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
