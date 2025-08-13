@@ -168,7 +168,7 @@ const LS_DATA = 'planner_data_v2';
 const LS_CATS = 'planner_categories_v2';
 const LS_COLS = 'planner_colors_v2';
 const LS_CAPS = 'planner_weekday_caps_v2';
-const DEFAULT_CATS = ['Evergreen','Shadow Me'];
+const DEFAULT_CATS = ['Evergreen','Shadow Me','2語トレ','DUO3.0'];
 
 let data = JSON.parse(localStorage.getItem(LS_DATA) || '{}'); // { 'YYYY-MM-DD': { categories:{name:{minutes,memo}}, todos:[{task,est,done}] } }
 let categories = JSON.parse(localStorage.getItem(LS_CATS) || JSON.stringify(DEFAULT_CATS));
