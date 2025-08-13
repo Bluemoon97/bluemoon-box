@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>一日予定表 完全版</title>
+<style>
+ :root{
+   --accent:#0b76ef; --bg:#f6f7fb; --card:#fff; --muted:#666; --danger:#e74c3c; --ok:#2ecc71;
+ }
+ *{box-sizing:border-box;font-family:system-ui,-apple-system,"Helvetica Neue",Arial}
+ body{margin:0;background:var(--bg);color:#111}
+ header{position:sticky;top:0;background:var(--card);padding:12px 16px;border-bottom:1px solid #eee;z-index:5}
+ h1{font-size:18px;margin:0}
+ .wrap{padding:14px;display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+ .card{background:var(--card);border:1px solid #eee;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.04);padding:12px}
+ label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+ input,button,select,textarea{font-size:14px;padding:8px;border:1px solid #ddd;border-radius:8px;background:#fff}
+ button{background:var(--accent);color:#fff;border:none;cursor:pointer}
+ button.ghost{background:#fff;color:var(--accent)}
+ .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+ .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+ .small{font-size:12px;color:var(--muted)}
+ .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f7ff;color:#0b76ef;font-size:12px}
+ table{width:100%;border-collapse:collapse}
+ th,td{border-bottom:1px solid #f0f0f0;padding:6px;text-align:left;font-size:14px;vertical-align:top}
+ .cat-color{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+ .warn{color:var(--danger)}
+ .ok{color:var(--ok)}
+ .section-title{font-weight:700;margin:6px 0 8px}
+ .flex-between{display:flex;justify-content:space-between;align-items:center}
+ .badge{font-size:11px;background:#eef3ff;color:#2b5cff;padding:2px 6px;border-radius:6px}
+ textarea{width:100%;min-height:46px;resize:vertical}
+ .todo-item{display:flex;gap:8px;align-items:center;padding:6px;border:1px solid #eee;border-radius:8px;margin-bottom:6px}
+ .todo-item.done{opacity:.6;text-decoration:line-through}
+ .hint{background:#fff7e6;border-left:4px solid #ffd36b;padding:8px;border-radius:8px}
+ @media(max-width:980px){ .wrap{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header class="flex-between">
+ <h1>一日予定表（詳細・To‑do・週判定つき）</h1>
+ <div class="small">保存先：この端末（localStorage）</div>
+</header>
+
+<div class="wrap">
+ <!-- 左：入力と当日情報 -->
+ <div class="card">
+   <div class="row">
+     <button id="prevDay">◀</button>
+     <div>
+       <label>日付</label>
+       <input type="date" id="dateInput">
+     </div>
+     <button id="nextDay">▶</button>
+     <div style="margin-left:auto;text-align:right">
+       <div class="small">本日の合計：<span id="todayTotal">0分</span></div>
+       <div class="small">本日の上限：<span id="todayCap">未設定</span>（残り <span id="todayRemain">-</span>）</div>
+     </div>
+   </div>
+
+   <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+
+   <div class="grid-2">
+     <!-- カテゴリ管理 -->
+     <div>
+       <div class="section-title">カテゴリ</div>
+       <div class="row">
+         <input type="text" id="newCategory" placeholder="カテゴリ名（例：勉強）" />
+         <input type="color" id="newCategoryColor" title="色" />
+         <button id="addCategory">追加</button>
+       </div>
+       <div class="small" style="margin:6px 0">追加したカテゴリは保存され、以後ずっと使えます。</div>
+       <table id="categoryTable">
+         <thead><tr><th>色</th><th>カテゴリ名</th><th></th></tr></thead>
+         <tbody></tbody>
+       </table>
+     </div>
+
+     <!-- 曜日ごとの上限 -->
+     <div>
+       <div class="section-title">曜日ごとの上限（分）</div>
+       <div class="grid-3" id="weekdayCaps"></div>
+       <div class="row" style="margin-top:8px">
+         <button id="saveCaps" class="ghost">保存</button>
+         <span class="small">※ 例：仕事日は「240」、休日は「480」など</span>
+       </div>
+     </div>
+   </div>
+
+   <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+
+   <!-- 当日：カテゴリ別 時間＋メモ -->
+   <div>
+     <div class="section-title">今日の記録（カテゴリ別）</div>
+     <table id="dayInputsTable">
+       <thead><tr><th style="width:140px">カテゴリ</th><th style="width:120px">時間（分）</th><th>メモ（具体的に何をしたか）</th></tr></thead>
+       <tbody></tbody>
+     </table>
+     <div class="row" style="margin-top:8px">
+       <button id="saveDay">保存</button>
+       <button id="clearDay" class="ghost">この日のデータを削除</button>
+       <span class="small" id="saveStatus" style="margin-left:auto">未保存</span>
+     </div>
+   </div>
+
+   <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+
+   <!-- To‑do -->
+   <div>
+     <div class="section-title">To‑do（この日）</div>
+     <div class="row">
+       <input type="text" id="todoText" placeholder="やること（例：英語課題）" style="flex:1" />
+       <input type="number" id="todoEst" min="0" placeholder="予定分" style="width:120px" />
+       <button id="addTodo">追加</button>
+     </div>
+     <div id="todoList" style="margin-top:8px"></div>
+   </div>
+ </div>
+
+ <!-- 右：可視化・詳細・提案 -->
+ <div class="card">
+   <div class="grid-2">
+     <div>
+       <div class="section-title">グラフ</div>
+       <div class="row">
+         <select id="periodSelect">
+           <option value="day">1日（円グラフ）</option>
+           <option value="week">1週間（積み上げ棒）</option>
+           <option value="month">1ヶ月（積み上げ棒）</option>
+         </select>
+         <button id="showChart">表示</button>
+       </div>
+       <canvas id="chartCanvas" height="260" style="margin-top:8px"></canvas>
+     </div>
+     <div>
+       <div class="section-title">週の達成状況</div>
+       <div id="weekStatus" class="hint small">
+         週のTo‑do達成率・時間利用率がここに表示されます。
+       </div>
+     </div>
+   </div>
+
+   <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+
+   <div class="grid-2">
+     <div>
+       <div class="section-title">選択日の詳細（メモ付き）</div>
+       <table id="dayDetail">
+         <thead><tr><th>カテゴリ</th><th>分</th><th>メモ</th></tr></thead>
+         <tbody></tbody>
+       </table>
+     </div>
+     <div>
+       <div class="section-title">未達To‑doの補える日（7日以内）</div>
+       <div id="catchUp"></div>
+     </div>
+   </div>
+ </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+/* ====== データと定数 ====== */
+const LS_DATA = 'planner_data_v2';
+const LS_CATS = 'planner_categories_v2';
+const LS_COLS = 'planner_colors_v2';
+const LS_CAPS = 'planner_weekday_caps_v2';
+const DEFAULT_CATS = ['Evergreen','Shadow Me'];
+
+let data = JSON.parse(localStorage.getItem(LS_DATA) || '{}'); // { 'YYYY-MM-DD': { categories:{name:{minutes,memo}}, todos:[{task,est,done}] } }
+let categories = JSON.parse(localStorage.getItem(LS_CATS) || JSON.stringify(DEFAULT_CATS));
+let colors = JSON.parse(localStorage.getItem(LS_COLS) || '{}');
+let weekdayCaps = JSON.parse(localStorage.getItem(LS_CAPS) || JSON.stringify({0:0,1:240,2:240,3:240,4:240,5:120,6:360}));
+
+/* ====== ユーティリティ ====== */
+const $ = (s)=>document.querySelector(s);
+const $$ = (s)=>Array.from(document.querySelectorAll(s));
+const iso = (d)=>d.toISOString().slice(0,10);
+const todayISO = ()=> iso(new Date());
+function randColor(){ return `hsl(${Math.floor(Math.random()*360)},70%,60%)`; }
+function ensureColor(cat){ if(!colors[cat]) colors[cat]=randColor(); }
+function saveAll(){ localStorage.setItem(LS_DATA, JSON.stringify(data)); localStorage.setItem(LS_CATS, JSON.stringify(categories)); localStorage.setItem(LS_COLS, JSON.stringify(colors)); localStorage.setItem(LS_CAPS, JSON.stringify(weekdayCaps)); }
+function minutesSum(obj){ return Object.values(obj||{}).reduce((s,v)=> s + (v?.minutes||0), 0); }
+function getWeekRange(dateStr){ const d=new Date(dateStr+'T00:00:00'); const day=(d.getDay()+6)%7; const mon=new Date(d); mon.setDate(d.getDate()-day); const sun=new Date(mon); sun.setDate(mon.getDate()+6); return {mon:iso(mon), sun:iso(sun)}; }
+function listDays(fromISO, n){ const out=[]; const d=new Date(fromISO+'T00:00:00'); for(let i=0;i<n;i++){ if(i>0) d.setDate(d.getDate()+1); out.push(iso(d)); } return out; }
+function formatMinutes(m){ const h=Math.floor(m/60), mm=m%60; return `${h}時間${String(mm).padStart(2,'0')}分`; }
+
+/* ====== 初期UI要素 ====== */
+const dateInput = $('#dateInput');
+const prevDay = $('#prevDay'), nextDay = $('#nextDay');
+const categoryTableBody = $('#categoryTable tbody');
+const weekdayCapsBox = $('#weekdayCaps');
+const dayInputsBody = $('#dayInputsTable tbody');
+const todayTotalEl = $('#todayTotal'), todayCapEl = $('#todayCap'), todayRemainEl = $('#todayRemain');
+const saveBtn = $('#saveDay'), clearBtn = $('#clearDay'), saveStatusEl = $('#saveStatus');
+const todoList = $('#todoList');
+const dayDetailBody = $('#dayDetail tbody');
+const catchUpBox = $('#catchUp');
+const weekStatusBox = $('#weekStatus');
+const periodSelect = $('#periodSelect'), showChartBtn = $('#showChart');
+let chartIns = null;
+
+/* ====== UIレンダリング ====== */
+function renderCategories(){
+ categoryTableBody.innerHTML = '';
+ categories.forEach(cat=>{
+   ensureColor(cat);
+   const tr = document.createElement('tr');
+   tr.innerHTML = `
+     <td><input type="color" value="${colors[cat]}" data-col="${cat}" title="色"></td>
+     <td>${cat}</td>
+     <td style="text-align:right">
+       <button class="ghost" data-del="${cat}">削除</button>
+     </td>`;
+   categoryTableBody.appendChild(tr);
+ });
+ // 色変更
+ $$('input[type="color"][data-col]').forEach(inp=>{
+   inp.oninput = ()=>{ colors[inp.dataset.col]=inp.value; saveAll(); drawCurrentDayRows(); drawChartsIfWanted(); };
+ });
+ // 削除
+ $$('button[data-del]').forEach(btn=>{
+   btn.onclick = ()=>{
+     const cat = btn.dataset.del;
+     if(!confirm(`カテゴリ「${cat}」を削除しますか？\n※ 既存データは残りますが、新規入力欄からは消えます。`)) return;
+     categories = categories.filter(c=>c!==cat);
+     saveAll();
+     renderCategories(); drawCurrentDayRows(); drawChartsIfWanted(); renderDayDetail(); updateTodayNumbers();
+   };
+ });
+}
+
+function renderWeekdayCaps(){
+ const names = ['日','月','火','水','木','金','土'];
+ weekdayCapsBox.innerHTML = '';
+ for(let i=0;i<7;i++){
+   const d = document.createElement('div');
+   d.innerHTML = `
+     <label>${names[i]}曜日の上限（分）</label>
+     <input type="number" min="0" value="${weekdayCaps[i]||0}" data-cap="${i}">
+   `;
+   weekdayCapsBox.appendChild(d);
+ }
+}
+
+function drawCurrentDayRows(){
+ // 当日レコード
+ const date = dateInput.value;
+ const rec = data[date] || { categories:{}, todos:[] };
+ dayInputsBody.innerHTML = '';
+ categories.forEach(cat=>{
+   ensureColor(cat);
+   const minutes = rec.categories?.[cat]?.minutes ?? 0;
+   const memo = rec.categories?.[cat]?.memo ?? '';
+   const tr = document.createElement('tr');
+   tr.innerHTML = `
+     <td><span class="cat-color" style="background:${colors[cat]}"></span>${cat}</td>
+     <td><input type="number" min="0" value="${minutes}" data-min="${cat}" style="width:110px"></td>
+     <td><textarea data-memo="${cat}" placeholder="具体的に何をしたか">${memo}</textarea></td>
+   `;
+   dayInputsBody.appendChild(tr);
+ });
+}
+
+function renderTodos(){
+ const date = dateInput.value;
+ const rec = data[date] || {categories:{}, todos:[]};
+ todoList.innerHTML = '';
+ (rec.todos||[]).forEach((t,idx)=>{
+   const div = document.createElement('div');
+   div.className = 'todo-item' + (t.done?' done':'');
+   div.innerHTML = `
+     <input type="checkbox" ${t.done?'checked':''} data-done="${idx}">
+     <input type="text" value="${t.task}" data-task="${idx}" style="flex:1">
+     <input type="number" min="0" value="${t.est||0}" data-est="${idx}" style="width:100px" title="予定分">
+     <button class="ghost" data-del-todo="${idx}">削除</button>
+   `;
+   todoList.appendChild(div);
+ });
+ // イベント
+ $$('input[data-done]').forEach(ch=>{
+   ch.onchange = ()=>{ rec.todos[ch.dataset.done].done = ch.checked; data[date]=rec; saveAll(); renderTodos(); renderWeekStatus(); renderCatchup(); };
+ });
+ $$('input[data-task]').forEach(inp=>{
+   inp.onchange = ()=>{ rec.todos[inp.dataset.task].task = inp.value; data[date]=rec; saveAll(); renderTodos(); };
+ });
+ $$('input[data-est]').forEach(inp=>{
+   inp.onchange = ()=>{ rec.todos[inp.dataset.est].est = Math.max(0,parseInt(inp.value)||0); data[date]=rec; saveAll(); renderTodos(); renderCatchup(); };
+ });
+ $$('button[data-del-todo]').forEach(btn=>{
+   btn.onclick = ()=>{ rec.todos.splice(parseInt(btn.dataset.delTodo),1); data[date]=rec; saveAll(); renderTodos(); renderWeekStatus(); renderCatchup(); };
+ });
+}
+
+function renderDayDetail(){
+ const date = dateInput.value;
+ const rec = data[date] || {categories:{}, todos:[]};
+ dayDetailBody.innerHTML = '';
+ Object.entries(rec.categories||{}).forEach(([cat,v])=>{
+   const tr = document.createElement('tr');
+   tr.innerHTML = `<td><span class="cat-color" style="background:${colors[cat]||'#ddd'}"></span>${cat}</td><td>${v.minutes||0}</td><td>${(v.memo||'').replace(/</g,'&lt;')}</td>`;
+   dayDetailBody.appendChild(tr);
+ });
+}
+
+function updateTodayNumbers(){
+ const date = dateInput.value;
+ const rec = data[date] || {categories:{}, todos:[]};
+ const sum = minutesSum(rec.categories);
+ const cap = weekdayCaps[new Date(date+'T00:00:00').getDay()] || 0;
+ todayTotalEl.textContent = `${sum}分`;
+ todayCapEl.textContent = cap>0? `${cap}分` : '未設定';
+ const remain = Math.max(0, cap - sum);
+ todayRemainEl.textContent = cap>0 ? `${remain}分` : '-';
+}
+
+function renderCatchup(){
+ const date = dateInput.value;
+ const {mon, sun} = getWeekRange(date);
+ // 週の未達To-do
+ const days = listDays(mon, 7);
+ const unDone = []; // {task, est, date}
+ days.forEach(d=>{
+   const rec = data[d];
+   if(!rec) return;
+   (rec.todos||[]).forEach(t=>{ if(!t.done) unDone.push({task:t.task, est:t.est||0, date:d}); });
+ });
+ catchUpBox.innerHTML = '';
+ if(unDone.length===0){ catchUpBox.innerHTML = '<div class="small ok">未達To‑doはありません。</div>'; return; }
+
+ // 直近7日（今日含め）で空き時間を算出
+ const next7 = listDays(date, 7);
+ const avail = next7.map(d=>{
+   const cap = weekdayCaps[new Date(d+'T00:00:00').getDay()]||0;
+   const used = minutesSum((data[d]||{}).categories||{});
+   return {date:d, free: Math.max(0, cap - used)};
+ }).sort((a,b)=> b.free - a.free);
+
+ // 表示
+ unDone.forEach(t=>{
+   const p = document.createElement('div');
+   const best = avail.find(a=> a.free >= t.est ); // 推定分を満たす候補
+   p.className = 'hint small';
+   p.style.marginBottom='6px';
+   p.innerHTML = `
+     <div><span class="badge">未達</span> ${t.task} ${t.est?`（必要${t.est}分）`:''} <span class="small">[元日:${t.date}]</span></div>
+     <div style="margin-top:4px">
+       補える候補:
+       ${ best
+           ? `<strong>${best.date}</strong>（空き ${best.free}分）`
+           : avail.length ? `${avail[0].date}（空き ${avail[0].free}分：不足${Math.max(0,(t.est||0)-avail[0].free)}分）` : '候補なし'
+         }
+     </div>`;
+   catchUpBox.appendChild(p);
+ });
+}
+
+function renderWeekStatus(){
+ const date = dateInput.value;
+ const {mon, sun} = getWeekRange(date);
+ const days = listDays(mon, 7);
+ let todoTotal=0, todoDone=0;
+ let capSum=0, usedSum=0;
+ days.forEach(d=>{
+   const rec = data[d];
+   capSum += weekdayCaps[new Date(d+'T00:00:00').getDay()]||0;
+   usedSum += minutesSum((rec?.categories)||{});
+   if(rec?.todos){
+     todoTotal += rec.todos.length;
+     todoDone += rec.todos.filter(t=>t.done).length;
+   }
+ });
+ const todoRate = todoTotal? Math.round(100*todoDone/todoTotal):0;
+ const timeRate = capSum? Math.round(100*usedSum/capSum):0;
+ weekStatusBox.innerHTML = `
+   <div>対象週：<span class="pill">${mon} 〜 ${sun}</span></div>
+   <div style="margin-top:6px">To‑do達成：<b>${todoDone}/${todoTotal}</b>（${todoRate}%）</div>
+   <div>時間利用：<b>${formatMinutes(usedSum)}</b> / ${formatMinutes(capSum)}（${timeRate}%）</div>
+   <div class="small" style="margin-top:6px">※ 達成率は週のTo‑do合計に対する完了数、時間利用率は曜日上限に対する実績の割合です。</div>
+ `;
+}
+
+/* ====== グラフ ====== */
+function buildDayPie(date){
+ const rec = data[date] || {categories:{}};
+ const labels=[], vals=[], cols=[];
+ Object.entries(rec.categories||{}).forEach(([cat,v])=>{
+   labels.push(cat); vals.push((v.minutes||0)/60); ensureColor(cat); cols.push(colors[cat]);
+ });
+ return {type:'pie', data:{labels, datasets:[{data:vals, backgroundColor:cols}]}, options:{plugins:{legend:{position:'bottom'}}}};
+}
+function buildRangeStacked(fromISO, daysCount){
+ const labels = listDays(fromISO, daysCount);
+ const cats = categories.slice();
+ const datasets = cats.map(cat=>{
+   ensureColor(cat);
+   return {label:cat, backgroundColor:colors[cat], data: labels.map(d=>{
+     const m = data[d]?.categories?.[cat]?.minutes || 0;
+     return m/60;
+   })};
+ });
+ return {
+   type:'bar',
+   data:{labels, datasets},
+   options:{
+     responsive:true,
+     plugins:{legend:{position:'bottom'}},
+     scales:{x:{stacked:true}, y:{stacked:true, title:{display:true,text:'時間（h）'}}}
+   }
+ };
+}
+function drawChart(period){
+ const date = dateInput.value;
+ const ctx = document.getElementById('chartCanvas').getContext('2d');
+ if(chartIns) chartIns.destroy();
+ if(period==='day'){
+   const conf = buildDayPie(date);
+   chartIns = new Chart(ctx, conf);
+ }else if(period==='week'){
+   const {mon} = getWeekRange(date);
+   const conf = buildRangeStacked(mon,7);
+   chartIns = new Chart(ctx, conf);
+ }else{
+   // month
+   const d0 = new Date(date+'T00:00:00');
+   const y=d0.getFullYear(), m=d0.getMonth();
+   const first = iso(new Date(y,m,1));
+   const daysInMonth = new Date(y,m+1,0).getDate();
+   const conf = buildRangeStacked(first, daysInMonth);
+   chartIns = new Chart(ctx, conf);
+ }
+}
+function drawChartsIfWanted(){
+ const p = periodSelect.value;
+ drawChart(p);
+}
+
+/* ====== 入出力 ====== */
+function loadDay(date){
+ // 存在しなければ0埋め
+ if(!data[date]) data[date] = {categories:{}, todos:[]};
+ // 新規カテゴリは0で表示
+ categories.forEach(cat=>{
+   if(!data[date].categories[cat]) data[date].categories[cat] = {minutes:0, memo:''};
+ });
+ drawCurrentDayRows();
+ renderTodos();
+ renderDayDetail();
+ updateTodayNumbers();
+ renderCatchup();
+ renderWeekStatus();
+ saveStatusEl.textContent = '読み込み済み';
+}
+function saveDay(){
+ const date = dateInput.value;
+ if(!data[date]) data[date]={categories:{}, todos:[]};
+ categories.forEach(cat=>{
+   const m = Math.max(0, parseInt(document.querySelector(`[data-min="${cat}"]`)?.value)||0);
+   const memo = (document.querySelector(`[data-memo="${cat}"]`)?.value||'').trim();
+   data[date].categories[cat]={minutes:m, memo};
+ });
+ // To‑doはそのまま別UIで保存しているのでここでは扱わない
+ saveAll();
+ saveStatusEl.textContent = `保存完了：${new Date().toLocaleTimeString()}`;
+ renderDayDetail(); updateTodayNumbers(); drawChartsIfWanted(); renderCatchup(); renderWeekStatus();
+}
+
+/* ====== イベント束ね ====== */
+function initWeekdayCapsUI(){
+ renderWeekdayCaps();
+ $('#saveCaps').onclick = ()=>{
+   $$('input[data-cap]').forEach(inp=>{
+     weekdayCaps[inp.dataset.cap] = Math.max(0, parseInt(inp.value)||0);
+   });
+   saveAll(); updateTodayNumbers(); renderCatchup(); renderWeekStatus(); drawChartsIfWanted();
+ };
+}
+function initCategoryUI(){
+ renderCategories();
+ $('#addCategory').onclick = ()=>{
+   const name = $('#newCategory').value.trim();
+   const col = $('#newCategoryColor').value || randColor();
+   if(!name) return alert('カテゴリ名を入力してください');
+   if(categories.includes(name)) return alert('同名のカテゴリがあります');
+   categories.push(name); colors[name]=col; saveAll();
+   $('#newCategory').value=''; renderCategories(); drawCurrentDayRows(); drawChartsIfWanted();
+ };
+}
+
+function initTodosUI(){
+ $('#addTodo').onclick = ()=>{
+   const date = dateInput.value;
+   const task = $('#todoText').value.trim();
+   const est = Math.max(0, parseInt($('#todoEst').value)||0);
+   if(!task) return;
+   if(!data[date]) data[date]={categories:{},todos:[]};
+   data[date].todos.push({task, est, done:false});
+   saveAll(); $('#todoText').value=''; $('#todoEst').value='';
+   renderTodos(); renderCatchup(); renderWeekStatus();
+ };
+}
+
+function navDay(delta){
+ const d = new Date(dateInput.value+'T00:00:00');
+ d.setDate(d.getDate()+delta);
+ dateInput.value = iso(d);
+ loadDay(dateInput.value); drawChartsIfWanted();
+}
+
+/* ====== 初期化 ====== */
+(function init(){
+ // 初期色割り当て
+ categories.forEach(ensureColor);
+ saveAll();
+
+ // 今日を選択
+ dateInput.value = todayISO();
+
+ // UI初期化
+ initCategoryUI();
+ initWeekdayCapsUI();
+ initTodosUI();
+
+ // 当日ロード
+ loadDay(dateInput.value);
+
+ // ボタン類
+ prevDay.onclick = ()=>navDay(-1);
+ nextDay.onclick = ()=>navDay(1);
+ dateInput.onchange = ()=>{ loadDay(dateInput.value); drawChartsIfWanted(); };
+ saveBtn.onclick = saveDay;
+ clearBtn.onclick = ()=>{
+   if(!confirm('この日のデータ（カテゴリ・To‑do）を削除しますか？')) return;
+   delete data[dateInput.value]; saveAll(); loadDay(dateInput.value); drawChartsIfWanted();
+ };
+ showChartBtn.onclick = ()=> drawChart(periodSelect.value);
+})();
+</script>
+</body>
+</html>
