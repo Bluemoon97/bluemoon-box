@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel Itinerary</title>
+<style>
+body{font-family:sans-serif;margin:0;background:#f5f5f5}
+header h1{background:#0e6d07;color:#fff;margin:0;padding:15px;font-size:20px}
+
+.controls{display:flex;gap:10px;padding:10px}
+button{flex:1;padding:12px;font-size:14px}
+
+.home{margin:10px;background:#fff;border-radius:10px;overflow:hidden}
+.row{display:flex;border-bottom:1px solid #ddd}
+.cell-left{width:33%;padding:8px}
+.cell-right{width:67%;padding:8px}
+.dark input {
+  color: #fff;
+}
+.dark input::placeholder {
+  color: #ddd;
+}
+.dark{background:#555;color:#fff}
+.platform input{
+  display:block;
+  line-height:1.4;
+}
+.platform input:nth-child(2){
+  margin-top: 14px;
+}
+.dark input[type="time"]{
+  color:#fff;
+  font-size:18px;
+  -webkit-text-fill-color:#fff;
+}
+input[type="time"]{
+  border:none;
+  background:transparent;
+}
+
+input::placeholder {
+  color: #999;
+}
+.dark input::placeholder {
+  color: #ccc;
+}
+input::-webkit-input-placeholder {
+  color: #999;
+}
+.dark input::-webkit-input-placeholder {
+  color: #ccc;
+}
+.white{background:#fff}
+.light{background:#eee}
+
+input{width:100%;border:none;background:transparent;font-size:16px}
+.small{font-size:12px}
+.big{font-size:18px;font-weight:bold}
+
+textarea{width:100%;border:none}
+.memo-big{font-size:16px}
+.memo-small{font-size:12px}
+
+   /* ハンバーガーメニュー */
+    #hamburger {
+        opacity: 0;
+        position: fixed;
+    }
+
+    label .burger {
+        position: fixed;
+        top: 1.6rem;
+        right: 1rem;
+        z-index: 3;
+        width: 1.5rem;
+        height: 1.6rem;
+    }
+
+    label .burger::before,
+    label .burger::after,
+    label .burger .bar {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 0.25rem;
+        border-radius: 5px;
+        background-color: #808080;
+        content: "";
+        transition: all 0.5s;
+    }
+
+    label .burger::before {
+        top: 0;
+        transform-origin: top right;
+        /* /起点を固定させる(起点右上) */
+    }
+
+    label .burger::after {
+        bottom: 0;
+        transform-origin: bottom right;
+        /* /起点を固定させる(起点右下) */
+    }
+
+    label .burger .bar {
+        top: 45%;
+    }
+
+    #menu {
+        width: 10%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    #menu::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        width: 43rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        content: "";
+        transform: skewX(0deg) translateX(100%);
+        transform-origin: bottom right;
+        transition: transform 0.8s;
+    }
+
+    #menu a {
+        margin: 0.71rem -355px;
+        padding: 0.12rem 0.6rem;
+        font-size: 1.0rem;
+        font-family: 'Hiragino Kaku Gothic Pro', sans-serif;
+        color: #808080;
+        text-decoration: none;
+        width: 25rem;
+        transform: translateX(100%);
+        transition: all 0.15s, transform 0.5s;
+        transition-timing-function: cubic-bezier(0.-19, -1, -0.22, -1);
+    }
+
+    #hamburger:checked+label .burger::before,
+    #hamburger:checked+label .burger::after {
+        width: 130%;
+    }
+
+    #hamburger:checked+label .burger::before {
+        transform: rotate(-45deg);
+        left: -10px;
+    }
+
+    #hamburger:checked+label .burger::after {
+        transform: rotate(45deg);
+        left: -10px;
+    }
+
+    #hamburger:checked+label .burger .bar {
+        transform: scale(0);
+    }
+
+    #hamburger:checked~#menu::before {
+        transform: skewX(0deg) translateX(8%);
+    }
+
+    #hamburger:checked~#menu a {
+        transform: translateX(0);
+    }
+
+    /* /タップされたら黒い背景が出る様にする */
+    #hamburger:checked~.light-dark {
+        background: #000;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    /* ハンバーガーメニュー */
+</style>
+</head>
+<body>
+<header><h1>Travel Itinerary</h1></header>
+        <!-- ハンバーガーメニュー -->
+        <input type="checkbox" id="hamburger">
+        <label for="hamburger">
+            <span class="burger">
+                <span class="bar"></span>
+            </span>
+        </label>
+        <label class="light-dark" for="hamburger"></label>
+        <div id="menu">
+            <a href="index.html">1日</a>
+            <a href="index3.html">3日</a>
+            <a href="http://www.urbanhotel-kajimachi.jp/" target="_blank">アーバンホテルかじまち</a>
+            <a href="https://travel.yahoo.co.jp/kanko/prefecture-fukuoka/area-kokura/" target="_blank">2026年人気の観光・お出かけスポット30選</a>
+            <a href="https://www.tabirai.net/localinfo/article/article-50691/" target="_blank">北九州・小倉観光で巡りたい名所10選をご紹介</a>
+            <a href="https://koenji-depart.com/shop_info/fantastica-souvenir/" target="_blank">ファンタスチカ雑貨店　高円寺</a>
+            <a href="https://ariake-arena.tokyo/access/" target="_blank">有明アリーナ</a>
+            <a href="https://tabelog.com/tokyo/A1314/A131401/13283054/" target="_blank">味芳斎 支店　大門駅</a>
+            <a href="https://tabelog.com/tokyo/A1323/A132302/13272500/" target="_blank">酒・食事処　大　護国寺駅</a>
+            <a href="https://rlx.jp/journal/syutoken/162111" target="_blank">Journal</a>
+            <a href="https://travel.rakuten.co.jp/mytrip/ranking/spot-tokyo" target="_blank">Travel</a>
+            <a href="https://www.kotsu.metro.tokyo.jp/subway/fare/otoku_limited.html" target="_blank">東京都交通局</a>
+
+        </div>
+        <!-- ハンバーガーメニュー -->
+
+<div class="controls">
+<button onclick="addHome()">ホームを追加</button>
+<button onclick="saveData()">データ保存</button>
+<button onclick="loadData()">データ読み込み</button>
+</div>
+
+<div id="homes"></div>
+
+<script>
+let homeId=0;
+
+function addHome(data={}){
+homeId++;
+let div=document.createElement('div');
+div.className='home';
+div.innerHTML=`
+<div class="row light">
+<div class="cell-left"><input placeholder="10分"></div>
+<div class="cell-right"><input placeholder="160円 / 乗換1回"></div>
+</div>
+
+<div class="row white">
+<div class="cell-left dark"><input type="time"></div>
+<div class="cell-right"><input class="big" placeholder="新宿"></div>
+</div>
+
+<div class="row light">
+<div class="cell-left platform">
+<input placeholder="1番">
+<input placeholder="2番">
+</div>
+<div class="cell-right">
+<input class="small" placeholder="3分 / 200円">
+<input placeholder="山手線">
+<input class="small" placeholder="渋谷方面">
+</div>
+</div>
+
+<div class="row white">
+<div class="cell-left dark">
+<input type="time">
+<input type="time">
+</div>
+<div class="cell-right">
+<input class="big" placeholder="渋谷">
+<input class="small" placeholder="乗換3分">
+</div>
+</div>
+
+<div class="row light">
+<div class="cell-left platform">
+<input placeholder="3番">
+<input placeholder="4番">
+</div>
+<div class="cell-right">
+<input class="small" placeholder="5分 / 300円">
+<input placeholder="東横線">
+<input class="small" placeholder="横浜方面">
+</div>
+</div>
+
+<div class="row white">
+<div class="cell-left dark"><input type="time"></div>
+<div class="cell-right"><input class="big" placeholder="横浜"></div>
+</div>
+
+<div class="row">
+<div class="cell-left"></div>
+<div class="cell-right">
+<textarea class="memo-big" placeholder="メモ"></textarea>
+<textarea class="memo-small" placeholder="詳細"></textarea>
+</div>
+</div>
+
+<button onclick="this.parentElement.remove()">削除</button>
+`;
+
+document.getElementById('homes').appendChild(div);
+}
+
+function saveData(){
+let data=[];
+document.querySelectorAll('.home').forEach(home=>{
+let inputs=home.querySelectorAll('input,textarea');
+let values=[];
+inputs.forEach(i=>values.push(i.value));
+data.push(values);
+});
+localStorage.setItem('travelData',JSON.stringify(data));
+alert('保存OK');
+}
+
+function loadData(){
+let data=JSON.parse(localStorage.getItem('travelData'));
+if(!data)return;
+document.getElementById('homes').innerHTML='';
+homeId=0;
+data.forEach(d=>{
+addHome();
+let home=document.querySelectorAll('.home')[homeId-1];
+let inputs=home.querySelectorAll('input,textarea');
+inputs.forEach((i,index)=>i.value=d[index]||"");
+});
+}
+</script>
+
+</body>
+</html>
