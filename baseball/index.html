@@ -1,0 +1,4793 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12球団オーダー入力</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      position: relative;
+      max-width: none;
+      width: 100%;
+      margin: auto;
+      background-color: #222;
+    }
+
+    .field-image {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .position-label {
+      width: 80px;
+      height: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      padding: 6px 10px;
+      font-size: 18px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      transform: translate(-50%, -50%);
+      font-family:
+        "Yu Mincho",
+        "MS Mincho",
+        serif;
+    }
+
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 20px;
+      gap: 20px;
+      height: 770px;
+      /* 無し */
+    }
+
+    .order,
+    .pitchers {
+      background: #111;
+      border: 4px solid #444;
+      padding: 15px;
+      border-radius: 0;
+      box-shadow: none;
+      color: white;
+    }
+
+    .order {
+      flex: 1 1 300px;
+      width: 100%;
+    }
+
+    .pitchers {
+      flex: 1 1 200px;
+      width: 100%;
+    }
+
+    .pitcher-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .order-item {
+      display: inline-flex;
+      flex-direction: column;
+      width: 80px;
+      margin: 0 4px;
+      vertical-align: top;
+    }
+
+    .position-select,
+    .player-select {
+      display: block !important;
+      width: 100%;
+    }
+
+    .player-select {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      height: 180px;
+      width: 70px;
+      font-size: 24px;
+    }
+
+    select {
+      background: #000;
+      color: #fff;
+      border: 2px solid #666;
+      font-size: 20px;
+      font-weight: bold;
+      font-family:
+        "Yu Mincho",
+        serif;
+      height: 50px;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    label {
+      min-width: 50px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .batting-order {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 28px;
+      font-weight: bold;
+      padding: 0;
+    }
+
+    .flip-name {
+      animation: flipBoard 0.6s ease;
+    }
+
+    @keyframes flipBoard {
+
+      0% {
+        transform:
+          translate(-50%, -50%) rotateY(0deg);
+      }
+
+      50% {
+        transform:
+          translate(-50%, -50%) rotateY(90deg);
+      }
+
+      100% {
+        transform:
+          translate(-50%, -50%) rotateY(0deg);
+      }
+    }
+
+    body {
+      background: #222;
+    }
+
+    .input-area {
+      background: #222;
+    }
+
+    .order-item,
+    .pitcher-item {
+      border-bottom: 1px solid #555;
+      padding: 6px 0;
+    }
+
+    .order,
+    .pitchers,
+    .position-label {
+
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        serif;
+
+      letter-spacing: 2px;
+    }
+
+    .koshien-header {
+      display: none;
+      grid-template-columns:
+        60px 120px 1fr;
+      color: white;
+      font-size: 24px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #koshien-preview {
+      display: none;
+    }
+
+    .preview-column {
+      width: 55px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .preview-order {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .preview-name {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      white-space: nowrap;
+      overflow: hidden;
+      font-size: 20px;
+      height: 170px;
+      line-height: 1;
+      margin: 8px 0;
+      letter-spacing: 2px;
+    }
+
+    .preview-pos {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+
+    #koshien-board {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 4px;
+      margin-top: 20px;
+      overflow-x: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .board-column {
+      width: 48px;
+      text-align: center;
+    }
+
+    .board-order {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .board-player {
+      width: 48px;
+      height: 150px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      text-align: center;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 16px;
+      line-height: 1.2;
+      padding-top: 4px;
+      margin: auto;
+    }
+
+    .board-pos {
+      width: 48px;
+      height: 40px;
+      margin-top: 10px;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #pitcher-board {
+      display: flex;
+      justify-content: flex-start;
+      gap: 4px;
+      overflow-x: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .pitcher-column {
+      width: 48px;
+      text-align: center;
+    }
+
+    .pitcher-role {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+
+      height: 60px;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .pitcher-player {
+      width: 48px;
+      height: 150px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      text-align: center;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 16px;
+      margin: 15px auto 0;
+    }
+
+    #batter-section {
+      display: none;
+    }
+
+    #old-koshien-board {
+      display: grid;
+      grid-template-columns:
+        1fr 280px 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+
+      width: 100%;
+      /* test */
+    }
+
+    #away-team-area,
+    #home-team-area {
+      background: #111;
+      border: 2px solid #555;
+      color: white;
+      padding: 10px;
+      min-height: 180px;
+    }
+
+    #center-tower {
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    #away-team-area {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    #home-team-area {
+      display: flex;
+      flex-direction: column;
+      width: 96%;
+      /* test */
+    }
+
+    .flag-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flag {
+      font-size: 24px;
+    }
+
+    .team-flag {
+      width: 36px;
+      height: 24px;
+
+      background: #333;
+      color: white;
+
+      border: 1px solid white;
+      border-radius: 2px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: 14px;
+      font-weight: bold;
+
+      position: relative;
+    }
+
+    .team-flag.tigers {
+      background:
+        repeating-linear-gradient(90deg,
+          #ffd700 0px,
+          #ffd700 8px,
+          #000 8px,
+          #000 16px);
+      color: white;
+    }
+
+    .team-display.tigers {
+      color: #ffd800;
+    }
+
+    .team-flag.giants {
+      background: #111;
+      color: #ff7f00;
+    }
+
+    .team-display.giants {
+      color: #ff8c00;
+    }
+
+    .team-flag.dragons {
+      background:
+        linear-gradient(to bottom,
+          #c00000 0%,
+          #c00000 25%,
+          #003399 25%,
+          #003399 100%);
+      color: white;
+    }
+
+    .team-display.dragons {
+      color: #0066cc;
+    }
+
+    .team-flag.carp {
+      background: #c00000;
+      color: white;
+    }
+
+    .team-display.carp {
+      color: #d40000;
+    }
+
+    .team-flag.baystars {
+      background: #0050c8;
+      color: white;
+    }
+
+    .team-display.baystars {
+      color: #0099ff;
+    }
+
+    .team-flag.swallows {
+      background: #00a651;
+      color: white;
+    }
+
+    .team-display.swallows {
+      color: #00aa55;
+    }
+
+    .team-flag.hawks {
+      background: #f5d000;
+      color: black;
+    }
+
+    .team-display.hawks {
+      color: #f5c400;
+    }
+
+    .team-flag.fighters {
+      background: #0060a9;
+      color: white;
+    }
+
+    .team-display.fighters {
+      color: #0066cc;
+    }
+
+    .team-flag.marines {
+      background: #000;
+      color: white;
+    }
+
+    .team-display.marines {
+      color: #eeeeee;
+    }
+
+    .team-flag.eagles {
+      background: #8b0000;
+      color: white;
+    }
+
+    .team-display.eagles {
+      color: #8b0000;
+    }
+
+    .team-flag.buffaloes {
+      background: #002244;
+      color: white;
+    }
+
+    .team-display.buffaloes {
+      color: #c9a227;
+    }
+
+    .team-flag.lions {
+      background: #0066cc;
+      color: white;
+    }
+
+    .team-display.lions {
+      color: #00a0e9;
+    }
+
+    /*==============================
+  球団ボタン
+  ==============================*/
+
+    .team-load.tigers {
+      background: #ffd400;
+      color: #111;
+    }
+
+    .team-load.giants {
+      background: #f58220;
+      color: #fff;
+    }
+
+    .team-load.dragons {
+      background: #005bac;
+      color: #fff;
+    }
+
+    .team-load.carp {
+      background: #d7001f;
+      color: #fff;
+    }
+
+    .team-load.baystars {
+      background: #0057b8;
+      color: #fff;
+    }
+
+    .team-load.swallows {
+      background: #2c8c4a;
+      color: #fff;
+    }
+
+    .team-load.hawks {
+      background: #f7d000;
+      color: #111;
+    }
+
+    .team-load.fighters {
+      background: #4fb6e8;
+      color: #fff;
+    }
+
+    .team-load.marines {
+      background: #111;
+      color: #fff;
+    }
+
+    .team-load.eagles {
+      background: #7a0019;
+      color: #fff;
+    }
+
+    .team-load.buffaloes {
+      background: #002b5c;
+      color: #fff;
+    }
+
+    .team-load.lions {
+      background: #008f5a;
+      color: #fff;
+    }
+
+    .team-flag::before {
+      content: "";
+      position: absolute;
+
+      left: -1px;
+      top: -1px;
+
+      width: 2px;
+      height: 40px;
+
+      background: white;
+    }
+
+    .team-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .team-side {
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      width: 72px;
+    }
+
+    .team-display {
+      color: #ffd800;
+      font-size: 22px;
+      font-weight: bold;
+      min-width: 120px;
+      text-align: left;
+    }
+
+    .team-header select {
+      width: 60px;
+      font-size: 16px;
+    }
+
+    .tower-title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
+      letter-spacing: 1px;
+    }
+
+    #sbo-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 24px;
+    }
+
+    .lamp {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #222;
+      border: 2px solid #666;
+    }
+
+    .lamp.on {
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .sbo-group {
+      text-align: center;
+    }
+
+    .sbo-title {
+      color: white;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .lamp-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .strike.on {
+      background: gold;
+    }
+
+    .ball.on {
+      background: lime;
+    }
+
+    .out.on {
+      background: red;
+    }
+
+    #score-board table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      color: white;
+      font-size: 12px;
+    }
+
+    #score-board input {
+      width: 24px;
+      background: black;
+      color: white;
+      border: none;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    #score-board th,
+    #score-board td {
+      border: 1px solid #666;
+      text-align: center;
+      padding: 2px;
+      width: 28px;
+      height: 30px;
+    }
+
+    #away-name,
+    #home-name {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #analog-clock {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto;
+      position: relative;
+      right: 10px;
+      top: -5px;
+    }
+
+    .clock-face {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      /* border:3px solid white; */
+      border-radius: 50%;
+      background: black;
+      margin: auto;
+    }
+
+    .clock-center {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #hour-hand {
+      position: absolute;
+      width: 4px;
+      height: 20px;
+      background: white;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      margin-left: 0px;
+      /* 時針の移動 */
+    }
+
+    #minute-hand {
+      position: absolute;
+      width: 2px;
+      height: 35px;
+      background: white;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      margin-left: -1px;
+    }
+
+    #umpire-area {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .umpire-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .umpire-title {
+      width: 24px;
+      height: 60px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+
+      margin: 0 auto;
+    }
+
+    .umpire-select {
+      width: 48px;
+      height: 140px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #away-order-board {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .away-column {
+      width: 48px;
+      text-align: center;
+    }
+
+    .away-order {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .away-player {
+      width: 48px;
+      height: 150px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      text-align: center;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 16px;
+      line-height: 1.2;
+      padding-top: 4px;
+      margin: auto;
+    }
+
+    .away-pos {
+      width: 48px;
+      height: 40px;
+      margin-top: 10px;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #away-pitcher-board {
+      display: flex;
+      gap: 4px;
+    }
+
+    #pitcher-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 30px;
+      margin-top: 20px;
+      padding: 15px;
+      background: #111;
+      border: 2px solid #555;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #pitcher-area>div {
+      width: 48%;
+    }
+
+    #away-pitcher-board,
+    #pitcher-board {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      overflow-x: auto;
+    }
+
+    .away-pitcher-column {
+      width: 48px;
+      text-align: center;
+    }
+
+    .away-pitcher-role {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+
+      height: 60px;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .away-pitcher-player {
+      width: 48px;
+      height: 150px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      text-align: center;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+      font-size: 16px;
+      margin: 15px auto 0;
+    }
+
+    .umpire-col {
+      text-align: center;
+    }
+
+    #umpire-area select {
+      width: 40px;
+      height: 120px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      background: black;
+      color: white;
+      border: 2px solid #666;
+    }
+
+    #sbo-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    #tower-top {
+      width: 180px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      left: 0px;
+      /* 凸の上側移動 */
+      padding: 10px;
+      background: #111;
+      border: 2px solid #555;
+      border-bottom: none;
+    }
+
+    #tower-top::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+
+      width: 100%;
+      height: 4px;
+
+      background: #111;
+    }
+
+    #tower-main {
+      width: 260px;
+      margin: 0 auto;
+      background: #111;
+      border: 2px solid #555;
+      padding: 10px;
+      position: relative;
+      z-index: 1;
+      min-height: 650px;
+      /* 815px */
+    }
+
+    .clock-face {
+      position: relative;
+    }
+
+    .clock-number {
+      position: absolute;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .n12 {
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .n3 {
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .n6 {
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .n9 {
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .tick {
+      position: absolute;
+      width: 2px;
+      height: 8px;
+      background: white;
+      left: 50%;
+      top: 84%;
+      transform-origin: center -27.0px;
+    }
+
+    .t1 {
+      transform: translate(-50%, -50%) rotate(30deg);
+    }
+
+    .t2 {
+      transform: translate(-50%, -50%) rotate(60deg);
+    }
+
+    .t4 {
+      transform: translate(-50%, -50%) rotate(120deg);
+    }
+
+    .t5 {
+      transform: translate(-50%, -50%) rotate(150deg);
+    }
+
+    .t7 {
+      transform: translate(-50%, -50%) rotate(210deg);
+    }
+
+    .t8 {
+      transform: translate(-50%, -50%) rotate(240deg);
+    }
+
+    .t10 {
+      transform: translate(-50%, -50%) rotate(300deg);
+    }
+
+    .t11 {
+      transform: translate(-50%, -50%) rotate(330deg);
+    }
+
+    .team-display {
+      cursor: pointer;
+    }
+
+    .team-header select {
+      display: none;
+    }
+
+    .team-header.editing select {
+      display: inline-block;
+    }
+
+    .team-header.editing .team-display {
+      display: none;
+    }
+
+    .select-fixed {
+      border: none !important;
+      background: transparent;
+    }
+
+    /*==============================
+  ツールバー
+  ==============================*/
+
+    #toolbar {
+
+      display: flex;
+      flex-wrap: wrap;
+
+      justify-content: center;
+      align-items: center;
+
+      gap: 8px;
+
+      margin: 20px 0;
+
+    }
+
+    /*==============================
+   共通ボタン
+  ==============================*/
+
+    .common-button {
+      height: 36px;
+      border: 2px solid #555;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .15s;
+      box-shadow:
+        0 2px 3px rgba(0, 0, 0, .35);
+
+    }
+
+    .common-button:not(.team-load) {
+      min-width: 74px;
+      background: #222;
+      color: white;
+    }
+
+    .team-load {
+      width: 46px;
+    }
+
+    .common-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .common-button:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /*==============================
+   選択中の球団
+  ==============================*/
+
+    .team-load.active {
+      border: 3px solid white;
+      transform: scale(1.08);
+      box-shadow:
+        0 0 10px rgba(255, 255, 255, .9);
+    }
+
+    /*==============================
+    HOME / VISITOR選択
+  ==============================*/
+
+    #team-select-popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-box {
+      width: 320px;
+      background: #222;
+      border: 3px solid silver;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .popup-title {
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .popup-btn {
+      width: 220px;
+      height: 42px;
+      margin: 8px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .cancel {
+      margin-top: 18px;
+    }
+
+    /*==============================
+  TEAM PLAYER PANEL
+  ==============================*/
+
+    #team-player-popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    #team-player-list {
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .player-row {
+      background: white;
+      border: 1px solid #aaa;
+      padding: 8px;
+      margin: 4px 0;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .pitcher-header {
+      background: #333;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    /*==============================
+    上段エリア
+  ==============================*/
+
+    #top-area {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-left: -2px;
+    }
+
+    /*==============================
+   レイアウト
+  ==============================*/
+
+    #lineup-area {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    #bottom-area {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #load-target {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #load-target button {
+      width: 130px;
+      height: 33px;
+    }
+
+    #load-target .active {
+      background: #009933;
+      color: white;
+    }
+
+    /*==================================
+ iPad STEP1
+==================================*/
+    @media screen and (min-width:768px) and (max-width:1199px) {
+
+      .container {
+        width: 100%;
+      }
+
+      .field-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .input-area {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      #pitcher-area {
+        width: 100%;
+        margin-top: 15px;
+        position: relative;
+        /* または absolute */
+        top: -80px;
+        /* 上に80px移動 */
+      }
+
+      #toolbar {
+        width: 100%;
+        margin-top: 15px;
+      }
+
+      /* 全体 */
+      .container {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* 球場画像 */
+      .field-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* ①②③ */
+      .input-area {
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      /* ④ */
+      #pitcher-area {
+        width: 100%;
+        margin-top: 16px;
+      }
+
+      /* ⑤ */
+      #toolbar {
+        width: 100%;
+        margin-top: 16px;
+      }
+
+      #old-koshien-board {
+        display: grid;
+        grid-template-columns: minmax(0, 40%) minmax(0, 20%) minmax(0, 40%);
+        gap: 20px;
+        /* 8px */
+      }
+
+      #tower-top {
+        width: 70%;
+        max-width: 180px;
+        margin: 0 auto;
+        position: relative;
+        left: 2px;
+      }
+
+      #tower-main {
+        width: 100%;
+        max-width: 260px;
+        left: -10px;
+      }
+
+      #center-tower {
+        min-width: 0;
+      }
+
+      #score-board th,
+      #score-board td {
+        width: 20px;
+        /* ←ここを縮める */
+        height: 26px;
+        padding: 1px;
+      }
+
+      #score-board input {
+        width: 18px;
+        font-size: 10px;
+      }
+
+      #score-board table {
+        table-layout: fixed;
+      }
+
+      #home-team-area {
+        width: 86%;
+        /* test */
+        gap: 10PX;
+        /* test */
+        height: 670px;
+        /* test */
+      }
+
+      .away-player {
+        width: 40px;
+        height: 130px;
+        font-size: 16px;
+      }
+
+      .away-pos {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .away-order {
+        font-size: 16px;
+      }
+
+      #away-order-board {
+        transform: scale(1.0);
+      }
+
+      .board-player {
+        width: 40px;
+        height: 130px;
+        font-size: 16px;
+      }
+
+      .board-pos {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .board-order {
+        font-size: 16px;
+      }
+
+      #koshien-board {
+        transform: scale(1.0);
+
+      }
+
+      #sbo-display {
+        transform: scale(0.8);
+      }
+
+      #sbo-buttons {
+        transform: scale(0.8);
+      }
+
+      #umpire-area {
+        transform: scale(0.8);
+      }
+
+      #away-team-area {
+        height: 670px;
+      }
+
+      #tower-main {
+        min-height: 554px;
+      }
+
+      #toolbar {
+        position: relative;
+        /* または absolute */
+        top: -80px;
+        /* 上に80px移動 */
+      }
+
+      .away-pitcher-role {
+        width: 40px;
+        height: 60px;
+        font-size: 16px;
+      }
+
+      .away-pitcher-player {
+        width: 40px;
+        height: 130px;
+        font-size: 16px;
+      }
+
+      .pitcher-role {
+        width: 40px;
+        height: 60px;
+        font-size: 16px;
+      }
+
+      .pitcher-player {
+        width: 40px;
+        height: 130px;
+        font-size: 16px;
+      }
+
+      #top-area {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-left: -2px;
+      }
+    }
+
+    /*====================================
+      iPhone（STEP1：配置だけ）
+    ====================================*/
+    @media screen and (max-width:430px) {
+      /*@media screen and (min-width:350px) and (max-width:767px) { */
+
+      /* 全体 */
+      #old-koshien-board {
+
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: 16px;
+      }
+
+      /* 表示順 */
+      #top-area {
+        order: 1;
+      }
+
+      #home-team-area {
+        order: 2;
+      }
+
+      #away-team-area {
+        order: 3;
+      }
+
+      #pitcher-area {
+        position: static;
+        top: auto;
+      }
+
+      #toolbar {
+        position: static;
+        top: auto;
+      }
+
+      /*=========================
+        VISITOR、HOMEの打順・選手名・守備位置の大きさ変更
+      =========================*/
+      .board-column {
+        width: 34px;
+      }
+
+      .board-player {
+        width: 34px;
+        height: 110px;
+        font-size: 16.5px;
+      }
+
+      .board-pos {
+        width: 34px;
+        height: 34px;
+        font-size: 16.5px;
+      }
+
+      .board-order {
+        font-size: 16.5px;
+      }
+
+      /* VISITOR打順・選手名・守備位置サイズ変更 */
+
+      .away-column {
+        width: 34px;
+      }
+
+      .away-player {
+        width: 34px;
+        height: 110px;
+        font-size: 16.5px;
+      }
+
+      .away-pos {
+        width: 34px;
+        height: 34px;
+        font-size: 16.5px;
+      }
+
+      .away-order {
+        font-size: 16.5px;
+      }
+
+      /*=========================
+        バックスクリーン
+      =========================*/
+
+      #top-area {
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+
+        width: 100%;
+
+        margin: 15px 0;
+      }
+
+      #center-tower {
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      #tower-top {
+        width: 130px;
+        max-width: 130px;
+        left: 0;
+        margin: 0 auto;
+      }
+
+      #tower-main {
+        width: 240px;
+        max-width: 240px;
+        left: 0;
+        min-height: auto;
+      }
+
+      /*====================
+        旗
+      ====================*/
+
+      .flag-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .team-flag {
+
+        width: 42px;
+        height: 28px;
+        font-size: 16px;
+      }
+
+      #tower-top {
+        position: relative;
+      }
+
+      #away-flag {
+        position: absolute;
+        left: -18px;
+        top: -10px;
+      }
+
+      #home-flag {
+        position: absolute;
+        right: -18px;
+        top: -10px;
+      }
+
+      /*=====================
+        旗を肩へ
+      =====================*/
+
+      .flag-area {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+      }
+
+      #away-flag {
+        position: absolute;
+        left: -60px;
+        top: 35px;
+      }
+
+      #home-flag {
+        position: absolute;
+        right: -60px;
+        top: 35px;
+      }
+
+      /*====================
+        時計
+      ====================*/
+      #analog-clock {
+        width: 64px;
+        height: 64px;
+        right: 0;
+        top: 0;
+        left: -11px;
+        /* 左へ移動 */
+        top: -16px;
+        /* 上へ移動 */
+      }
+
+      /* 打順 */
+
+      #away-team-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: auto;
+      }
+
+      #away-order-board {
+        margin-bottom: 0px;
+        /* VISITOR,HOMEの間隔を広げる*/
+      }
+
+      /*========================
+        HOME（スコアボード）
+      ========================*/
+
+      #home-team-area {
+        width: 96%;
+        /* スコアボード枠幅 */
+        margin: 0 auto;
+        height: auto;
+      }
+
+      #score-board th,
+      #score-board td {
+        width: 15px;
+        /* スコアボード自体の幅の調整 */
+        height: 24px;
+        padding: 0;
+      }
+
+      #score-board input {
+        width: 15px;
+        font-size: 11px;
+      }
+
+      #score-board table {
+        width: auto;
+        margin: 0 auto;
+      }
+
+      /*==========================
+        打順ボードを画面いっぱいに
+      ==========================*/
+
+      /* 中央寄せ */
+      #away-order-board {
+        display: flex;
+        justify-content: center;
+      }
+
+      #koshien-board {
+        display: flex;
+        justify-content: center;
+      }
+
+      /*========================
+        VISITOR（打順）
+      ========================*/
+
+      #away-team-area {
+        width: 96%;
+        margin: 0 auto;
+        gap: 24px;
+        height: auto;
+      }
+
+      /* ---------- 投手エリア ---------- */
+
+      #pitcher-area {
+        margin-top: 720px;
+        /* 野手と投手の枠の隙間を開ける */
+        margin-left: 15px;
+        /* 枠の左を右に寄せる */
+        display: flex;
+        flex-direction: column;
+        gap: 185px;
+        align-items: center;
+        width: 96%;
+        /* 枠の右を左に寄せる */
+        height: 500px;
+      }
+
+      .pitcher-header {
+        height: 20px;
+        width: 200px;
+      }
+
+      /*==========================
+        投手ボードを画面いっぱいに
+      ==========================*/
+      #away-pitcher-board {
+        display: flex;
+        justify-content: center;
+        width: 370px;
+        position: absolute;
+        left: 20px;
+
+      }
+
+      #pitcher-board {
+        display: flex;
+        justify-content: center;
+        width: 360px;
+        position: absolute;
+        left: 5%;
+        transform: translateY(-165px);
+      }
+
+      #pitcher-area>div:last-child .pitcher-header {
+        position: relative;
+        top: -170px;
+      }
+
+      .away-pitcher-role {
+        width: 30px;
+        height: 44px;
+        font-size: 16.5px;
+      }
+
+      .away-pitcher-player {
+        width: 30px;
+        height: 110px;
+        font-size: 16.5px;
+      }
+
+      .pitcher-role {
+        width: 30px;
+        height: 44px;
+        font-size: 16.5px;
+      }
+
+      .pitcher-player {
+        width: 30px;
+        height: 110px;
+        font-size: 16.5px;
+      }
+
+      .away-pitcher-role,
+      .away-pitcher-player,
+      .pitcher-role,
+      .pitcher-player {
+        position: relative;
+        left: 22px;
+      }
+
+
+      /* ---------- ボタン ---------- */
+
+      #toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .toolbar-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      #toolbar button:nth-child(-n+3) {
+        order: 1;
+      }
+
+      #toolbar button:nth-child(n+4):nth-child(-n+9) {
+        order: 2;
+      }
+
+      #toolbar button:nth-child(n+10) {
+        order: 3;
+      }
+
+      #toolbar button {
+        flex: 0 0 auto;
+      }
+
+      .common-button {
+        height: 33px;
+      }
+
+      #load-target {
+        margin-top: 20px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <img src="stadium.jpg" alt="野球場" class="field-image" />
+
+    <!-- 守備位置の上に選手名が反映される -->
+    <div id="position-P" class="position-label" style="top: 71%; left: 50%;">P</div>
+    <div id="position-C" class="position-label" style="top: 92%; left: 50%;">C</div>
+    <div id="position-1B" class="position-label" style="top: 73%; left: 78%;">1B</div>
+    <div id="position-2B" class="position-label" style="top: 64%; left: 64%;">2B</div>
+    <div id="position-3B" class="position-label" style="top: 73%; left: 22%;">3B</div>
+    <div id="position-SS" class="position-label" style="top: 64%; left: 36%;">SS</div>
+    <div id="position-LF" class="position-label" style="top: 57%; left: 16%;">LF</div>
+    <div id="position-CF" class="position-label" style="top: 53%; left: 50%;">CF</div>
+    <div id="position-RF" class="position-label" style="top: 57%; left: 84%;">RF</div>
+    <div id="position-DH" class="position-label" style="top: 88%; left: 15%;">DH</div>
+  </div>
+
+  <div class="input-area">
+    <div id="old-koshien-board">
+
+      <div id="away-team-area">
+        <div class="team-header">
+
+          <span class="team-side">VISITOR</span>
+
+          <span id="away-team-display" class="team-display">
+            Giants
+          </span>
+
+          <select id="away-team">
+            <option>G</option>
+            <option>T</option>
+            <option>D</option>
+            <option>C</option>
+            <option>DB</option>
+            <option>S</option>
+            <option>H</option>
+            <option>F</option>
+            <option>M</option>
+            <option>E</option>
+            <option>B</option>
+            <option>L</option>
+          </select>
+        </div>
+
+        <div id="away-order-board"></div>
+        <div class="team-header">
+
+          <span class="team-side">HOME</span>
+
+          <span id="home-team-display" class="team-display">
+            Tigers
+          </span>
+
+          <select id="home-team">
+            <option>T</option>
+            <option>G</option>
+            <option>D</option>
+            <option>C</option>
+            <option>DB</option>
+            <option>S</option>
+            <option>H</option>
+            <option>F</option>
+            <option>M</option>
+            <option>E</option>
+            <option>B</option>
+            <option>L</option>
+          </select>
+
+        </div>
+        <div id="koshien-board"></div>
+        <div id="koshien-preview"></div>
+        <div id="home-team-select-area">
+
+
+
+        </div>
+
+      </div>
+
+      <div id="top-area">
+        <div id="center-tower">
+
+          <div id="tower-top">
+            　　<div class="flag-area">
+
+              <div id="away-flag" class="team-flag">
+                T
+              </div>
+
+              <div id="analog-clock">
+
+                <div class="clock-face">
+
+                  <div class="clock-number n12">12</div>
+                  <div class="clock-number n3">3</div>
+                  <div class="clock-number n6">6</div>
+                  <div class="clock-number n9">9</div>
+
+                  <div class="tick t1"></div>
+                  <div class="tick t2"></div>
+                  <div class="tick t4"></div>
+                  <div class="tick t5"></div>
+                  <div class="tick t7"></div>
+                  <div class="tick t8"></div>
+                  <div class="tick t10"></div>
+                  <div class="tick t11"></div>
+
+                  <div class="clock-inner-circle"></div>
+                  <div class="clock-center"></div>
+
+                  <div id="hour-hand"></div>
+                  <div id="minute-hand"></div>
+
+                </div>
+
+              </div>
+
+              <div id="home-flag" class="team-flag">
+                G
+              </div>
+
+            </div>
+          </div>
+
+          <div id="tower-main">
+            　　<div id="sbo-display">
+
+              <div class="sbo-group">
+
+                <div class="sbo-title">S</div>
+
+                <div class="lamp-row">
+                  <div class="lamp strike"></div>
+                  <div class="lamp strike"></div>
+                </div>
+
+              </div>
+
+              <div class="sbo-group">
+
+                <div class="sbo-title">B</div>
+
+                <div class="lamp-row">
+                  <div class="lamp ball"></div>
+                  <div class="lamp ball"></div>
+                  <div class="lamp ball"></div>
+                </div>
+
+              </div>
+
+              <div class="sbo-group">
+
+                <div class="sbo-title">O</div>
+
+                <div class="lamp-row">
+                  <div class="lamp out"></div>
+                  <div class="lamp out"></div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div id="sbo-buttons">
+              <button onclick="changeSBO('S')">S</button>
+              <button onclick="changeSBO('B')">B</button>
+              <button onclick="changeSBO('O')">O</button>
+              <button onclick="resetSBO()">RESET</button>
+            </div>
+
+            <br>
+
+            <div class="tower-title">
+              UMPIRE
+              　</div>
+
+            <div id="umpire-area">
+
+              <div class="umpire-col">
+                <div class="umpire-title">球審</div>
+                <select id="ump-hp" class="umpire-select"></select>
+              </div>
+
+              <div class="umpire-col">
+                <div class="umpire-title">一塁</div>
+                <select id="ump-1b" class="umpire-select"></select>
+              </div>
+
+              <div class="umpire-col">
+                <div class="umpire-title">二塁</div>
+                <select id="ump-2b" class="umpire-select"></select>
+              </div>
+
+              <div class="umpire-col">
+                <div class="umpire-title">三塁</div>
+                <select id="ump-3b" class="umpire-select"></select>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="home-team-area">
+
+
+        <div id="score-board">
+
+          <table id="score-table">
+
+            <tr>
+
+              <th></th>
+
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>R</th>
+              <th>H</th>
+              <th>E</th>
+
+            </tr>
+
+            <tr>
+
+              <td id="away-name">G</td>
+
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input class="score away inning-score"></td>
+              <td><input id="away-run"></td>
+              <td><input id="away-hit"></td>
+              <td><input id="away-error"></td>
+
+            </tr>
+
+            <tr>
+
+              <td id="home-name">T</td>
+
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input class="score home inning-score"></td>
+              <td><input id="home-run"></td>
+              <td><input id="home-hit"></td>
+              <td><input id="home-error"></td>
+
+            </tr>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  </div>
+
+  <div id="pitcher-area">
+    <div>
+      <div class="pitcher-header">
+        VISITOR PITCHER
+      </div>
+      <div id="away-pitcher-board"></div>
+    </div>
+    <div>
+      <div class="pitcher-header">
+        HOME PITCHER
+      </div>
+      <div id="pitcher-board"></div>
+    </div>
+  </div>
+
+
+  <div id="toolbar">
+
+    <div class="toolbar-row">
+      <button class="common-button" onclick="saveData()">保存</button>
+      <button class="common-button" onclick="loadData()">読み込み</button>
+      <button class="common-button" onclick="resetData()">リセット</button>
+    </div>
+
+    <div class="toolbar-row">
+      <button class="common-button team-load" data-team="T">HT</button>
+      <button class="common-button team-load" data-team="G">YG</button>
+      <button class="common-button team-load" data-team="D">CD</button>
+      <button class="common-button team-load" data-team="C">CC</button>
+      <button class="common-button team-load" data-team="DB">DB</button>
+      <button class="common-button team-load" data-team="S">YS</button>
+    </div>
+
+    <div class="toolbar-row">
+      <button class="common-button team-load" data-team="H">SH</button>
+      <button class="common-button team-load" data-team="F">NF</button>
+      <button class="common-button team-load" data-team="M">LM</button>
+      <button class="common-button team-load" data-team="E">RE</button>
+      <button class="common-button team-load" data-team="B">Bs</button>
+      <button class="common-button team-load" data-team="L">SL</button>
+    </div>
+
+  </div>
+
+  <div id="load-target">
+
+    <button id="load-home" class="active">
+      HOMEへ反映
+    </button>
+
+    <button id="load-away">
+      VISITORへ反映
+    </button>
+
+  </div>
+
+  <div id="team-select-popup">
+    <div class="popup-box">
+      <div class="popup-title">
+        どちらへ登録しますか？
+      </div>
+      <button id="popup-home" class="popup-btn">
+        HOME
+      </button>
+      <button id="popup-away" class="popup-btn">
+        VISITOR
+      </button>
+      <button id="popup-cancel" class="popup-btn cancel">
+        キャンセル
+      </button>
+    </div>
+  </div>
+
+  <div id="team-player-popup">
+    <div class="popup-box">
+      <div id="team-player-title" class="popup-title">
+        TEAM PLAYERS
+      </div>
+      <div id="team-player-list">
+      </div>
+      <button id="player-close" class="popup-btn cancel">
+        閉じる
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 打順×守備位置エリアの描画
+
+
+    updateKoshienPreview();
+
+    createKoshienBoard();
+    createPitcherBoard();
+
+    function createKoshienBoard() {
+
+      const board =
+        document.getElementById("koshien-board");
+
+      board.innerHTML = "";
+
+      const kansuji =
+        ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
+
+      for (let i = 0; i < 9; i++) {
+
+        const col =
+          document.createElement("div");
+
+        col.className =
+          "board-column";
+
+        col.innerHTML =
+          `
+    <div class="board-order">
+      ${kansuji[i]}
+    </div>
+
+    <select class="board-player">
+
+      <option value="">選手名</option>
+
+    </select>
+
+<select class="board-pos">
+
+<option value="">守</option>
+
+<option value="P">投</option>
+<option value="C">捕</option>
+<option value="1B">一</option>
+<option value="2B">二</option>
+<option value="3B">三</option>
+<option value="SS">遊</option>
+<option value="LF">左</option>
+<option value="CF">中</option>
+<option value="RF">右</option>
+<option value="DH">DH</option>
+
+</select>
+    `;
+
+        board.appendChild(col);
+      }
+
+      /* ここから追加 */
+      document
+        .querySelectorAll(".board-player,.board-pos")
+        .forEach(sel => {
+
+          sel.addEventListener(
+            "change",
+            updateBoardToField
+          );
+
+        });
+      /* ここまで追加 */
+    }
+
+    function updateBoardToField() {
+
+      document
+        .querySelectorAll(".position-label")
+        .forEach(label => {
+
+          const map = {
+            "position-P": "P",
+            "position-C": "C",
+            "position-1B": "1B",
+            "position-2B": "2B",
+            "position-3B": "3B",
+            "position-SS": "SS",
+            "position-LF": "LF",
+            "position-CF": "CF",
+            "position-RF": "RF",
+            "position-DH": "DH"
+          };
+
+          label.textContent =
+            map[label.id];
+
+        });
+
+      document
+        .querySelectorAll(
+          loadTarget === "home"
+            ? ".board-column"
+            : ".away-column"
+        )
+        .forEach(col => {
+
+          const pos =
+            col.querySelector(
+              loadTarget === "home"
+                ? ".board-pos"
+                : ".away-pos"
+            ).value;
+
+          const name =
+            col.querySelector(
+              loadTarget === "home"
+                ? ".board-player"
+                : ".away-player"
+            ).value;
+
+          if (pos && name) {
+
+            const target =
+              document.getElementById(
+                (loadTarget === "home"
+                  ? "position-"
+                  : "away-position-") + pos
+              );
+
+            if (target) {
+
+              target.classList.remove(
+                "flip-name"
+              );
+
+              void target.offsetWidth;
+
+              target.classList.add(
+                "flip-name"
+              );
+
+              target.textContent =
+                name;
+            }
+          }
+
+        });
+
+    }
+
+    // 守備位置ごとに選手を反映
+    document.querySelectorAll(".position-select").forEach((posSel, idx) => {
+      const playerSel = document.querySelectorAll(".player-select")[idx];
+
+      function updatePositionLabel() {
+        const pos = posSel.value;
+        const name = playerSel.value;
+        if (pos && name) {
+          const label = document.getElementById("position-" + pos);
+          if (label) {
+            label.classList.remove("flip-name");
+            void label.offsetWidth;
+            label.classList.add("flip-name");
+            label.textContent = name;
+          }
+        }
+      }
+
+      posSel.addEventListener("change", () => {
+        updatePositionLabel();
+        updateKoshienPreview();
+      });
+
+      playerSel.addEventListener("change", () => {
+        updatePositionLabel();
+        updateKoshienPreview();
+      });
+    });
+
+    // 以下のコードは既存のコードの下に追加
+
+    function saveData() {
+      const batters = [];
+
+      document.querySelectorAll(".board-column")
+        .forEach(col => {
+
+          batters.push({
+            name: col.querySelector(".board-player").value,
+            pos: col.querySelector(".board-pos").value
+          });
+
+        });
+
+      const homePitchers =
+        Array.from(
+          document.querySelectorAll(
+            "#pitcher-board .pitcher-player"
+          )
+        ).map(sel => sel.value);
+
+      const awayPitchers =
+        Array.from(
+          document.querySelectorAll(
+            "#away-pitcher-board .away-pitcher-player"
+          )
+        ).map(sel => sel.value);
+
+      const umpires = {
+
+        hp:
+          document.getElementById("ump-hp").value,
+
+        b1:
+          document.getElementById("ump-1b").value,
+
+        b2:
+          document.getElementById("ump-2b").value,
+
+        b3:
+          document.getElementById("ump-3b").value
+
+      };
+
+      const sbo = {
+
+        strike:
+          strikeCount,
+
+        ball:
+          ballCount,
+
+        out:
+          outCount
+
+      };
+
+      const scoreAway =
+        Array.from(
+          document.querySelectorAll(".away.inning-score")
+        ).map(input => input.value);
+
+      const scoreHome =
+        Array.from(
+          document.querySelectorAll(".home.inning-score")
+        ).map(input => input.value);
+
+      const awayBatters = [];
+
+      document
+        .querySelectorAll(".away-column")
+        .forEach(col => {
+
+          awayBatters.push({
+
+            name:
+              col.querySelector(".away-player").value,
+
+            pos:
+              col.querySelector(".away-pos").value
+
+          });
+
+        });
+
+      const data = {
+
+        teamData: {
+
+          batters,
+
+          homePitchers,
+
+          awayPitchers
+
+        },
+
+        awayTeam:
+          document.getElementById("away-team").value,
+
+        homeTeam:
+          document.getElementById("home-team").value,
+
+        umpires,
+
+        sbo,
+
+        scoreAway,
+
+        scoreHome,
+
+        awayRun:
+          document.getElementById("away-run").value,
+
+        homeRun:
+          document.getElementById("home-run").value,
+
+        awayHit:
+          document.getElementById("away-hit").value,
+
+        homeHit:
+          document.getElementById("home-hit").value,
+
+        awayError:
+          document.getElementById("away-error").value,
+
+        homeError:
+          document.getElementById("home-error").value
+
+      };
+
+
+      const saveTeam =
+        document.getElementById("home-team").value;
+
+      localStorage.setItem(
+        "team_" + currentTeamKey,
+        JSON.stringify(data)
+      );
+
+      alert(teamNames[currentTeamKey] + " を保存しました！");
+    }
+
+    function loadData() {
+
+      const data = JSON.parse(
+        localStorage.getItem(
+          "team_" + currentTeamKey
+        )
+      );
+      if (!data) {
+        alert("保存されたデータが見つかりません。");
+        return;
+      }
+
+      if (data.awayTeam)
+        document.getElementById("away-team").value =
+          data.awayTeam;
+
+      if (data.homeTeam)
+        document.getElementById("home-team").value =
+          data.homeTeam;
+
+      const boardCols =
+        loadTarget === "home"
+          ? document.querySelectorAll(".board-column")
+          : document.querySelectorAll(".away-column");
+
+      data.teamData.batters.forEach((batter, idx) => {
+
+        if (boardCols[idx]) {
+
+          boardCols[idx]
+            .querySelector(
+              loadTarget === "home"
+                ? ".board-player"
+                : ".away-player"
+            )
+            .value = batter.name;
+
+          boardCols[idx]
+            .querySelector(
+              loadTarget === "home"
+                ? ".board-pos"
+                : ".away-pos"
+            )
+            .value = batter.pos;
+        }
+
+        // 守備位置ラベル更新
+        if (batter.pos && batter.name) {
+
+          const prefix =
+            loadTarget === "home"
+              ? "position-"
+              : "away-position-";
+
+          const label =
+            document.getElementById(
+              prefix + batter.pos
+            );
+
+          if (label)
+            label.textContent = batter.name;
+        }
+
+      });
+
+      document.querySelectorAll(
+        loadTarget === "home"
+          ? ".board-player"
+          : ".away-player"
+      ).forEach(select => {
+
+        if (select.value !== "") {
+          select.classList.add("select-fixed");
+        }
+
+      });
+
+      if (data.teamData.homePitchers) {
+
+        const homePitchers =
+          loadTarget === "home"
+            ? document.querySelectorAll(
+              "#pitcher-board .pitcher-player"
+            )
+            : document.querySelectorAll(
+              "#away-pitcher-board .away-pitcher-player"
+            );
+
+        data.teamData.homePitchers.forEach((val, idx) => {
+
+          if (homePitchers[idx]) {
+
+            homePitchers[idx].value = val;
+
+          }
+
+        });
+
+      }
+
+      if (data.teamData.awayPitchers) {
+
+        const awayPitchers =
+          loadTarget === "home"
+            ? document.querySelectorAll(
+              "#away-pitcher-board .away-pitcher-player"
+            )
+            : document.querySelectorAll(
+              "#pitcher-board .pitcher-player"
+            );
+
+        data.teamData.awayPitchers.forEach((val, idx) => {
+
+          if (awayPitchers[idx]) {
+
+            awayPitchers[idx].value = val;
+
+          }
+
+        });
+
+      }
+
+      if (data.umpires) {
+
+        document.getElementById("ump-hp").value =
+          data.umpires.hp || "";
+
+        document.getElementById("ump-1b").value =
+          data.umpires.b1 || "";
+
+        document.getElementById("ump-2b").value =
+          data.umpires.b2 || "";
+
+        document.getElementById("ump-3b").value =
+          data.umpires.b3 || "";
+
+      }
+
+      if (data.sbo) {
+
+        strikeCount =
+          data.sbo.strike || 0;
+
+        ballCount =
+          data.sbo.ball || 0;
+
+        outCount =
+          data.sbo.out || 0;
+
+        updateSBO();
+
+      }
+
+      document.getElementById("away-run").value =
+        data.awayRun || "";
+
+      document.getElementById("home-run").value =
+        data.homeRun || "";
+
+      document.getElementById("away-hit").value =
+        data.awayHit || "";
+
+      document.getElementById("home-hit").value =
+        data.homeHit || "";
+
+      document.getElementById("away-error").value =
+        data.awayError || "";
+
+      document.getElementById("home-error").value =
+        data.homeError || "";
+
+      if (data.scoreAway) {
+
+        document
+          .querySelectorAll(".away.inning-score")
+          .forEach((input, idx) => {
+
+            input.value =
+              data.scoreAway[idx] || "";
+
+          });
+
+      }
+
+      if (data.scoreHome) {
+
+        document
+          .querySelectorAll(".home.inning-score")
+          .forEach((input, idx) => {
+
+            input.value =
+              data.scoreHome[idx] || "";
+
+          });
+
+      }
+
+      document.getElementById("away-run").value =
+        data.awayRun || "";
+
+      document.getElementById("home-run").value =
+        data.homeRun || "";
+
+      document.getElementById("away-hit").value =
+        data.awayHit || "";
+
+      document.getElementById("home-hit").value =
+        data.homeHit || "";
+
+      document.getElementById("away-error").value =
+        data.awayError || "";
+
+      document.getElementById("home-error").value =
+        data.homeError || "";
+
+      updateRunTotal();
+
+      updateBoardToField();
+
+      updateFlags();
+
+      applySelectFixed();
+
+      alert("読み込みました！");
+
+    }
+
+    function resetData() {
+      if (!confirm("すべての入力をリセットしますか？")) return;
+
+      document.querySelectorAll(".board-player").forEach(sel => sel.value = "");
+      document.querySelectorAll(".board-pos").forEach(sel => sel.value = "");
+      document.querySelectorAll(".pitchers select").forEach(sel => sel.value = "");
+      document.querySelectorAll("#pitcher-board .pitcher-player").forEach(sel => sel.value = "");
+      document.querySelectorAll("#away-pitcher-board .away-pitcher-player").forEach(sel => sel.value = "");
+      document.querySelectorAll(".away-player").forEach(sel => sel.value = "");
+      document.querySelectorAll(".away-pos").forEach(sel => sel.value = "");
+
+      // 守備位置ラベルを初期化
+      document.querySelectorAll(".position-label").forEach(label => {
+        label.textContent = label.id.replace("position-", "");
+      });
+
+      document
+        .querySelectorAll(".inning-score")
+        .forEach(input => input.value = "");
+
+      document.getElementById("away-run").value = "";
+      document.getElementById("home-run").value = "";
+
+      document.getElementById("away-hit").value = "";
+      document.getElementById("home-hit").value = "";
+
+      document.getElementById("away-error").value = "";
+      document.getElementById("home-error").value = "";
+
+      document.getElementById("ump-hp").value = "";
+      document.getElementById("ump-1b").value = "";
+      document.getElementById("ump-2b").value = "";
+      document.getElementById("ump-3b").value = "";
+
+      document.getElementById("away-team").value = "G";
+      document.getElementById("home-team").value = "T";
+
+      updateFlags();
+
+      strikeCount = 0;
+      ballCount = 0;
+      outCount = 0;
+
+      updateSBO();
+
+      updateBoardToField();
+
+      alert("リセットしました");
+    }
+
+    createUmpireList();
+
+    function createUmpireList() {
+
+      const names = [
+        "",
+        "眞鍋",
+        "有隅",
+        "吉本",
+        "津川",
+        "牧田",
+        "山路",
+        "敷田",
+        "白井",
+        "秋村",
+        "本田",
+        "原",
+        "福家",
+        "嶋田",
+        "長川",
+        "有隅",
+        "川口",
+        "深谷"
+      ];
+
+      [
+        "ump-hp",
+        "ump-1b",
+        "ump-2b",
+        "ump-3b"
+      ].forEach(id => {
+
+        const sel =
+          document.getElementById(id);
+
+        if (!sel) return;
+
+        names.forEach(name => {
+
+          const opt =
+            document.createElement("option");
+
+          opt.textContent = name;
+
+          opt.value = name;
+
+          sel.appendChild(opt);
+
+        });
+
+      });
+
+    }
+
+    createAwayOrderBoard();
+
+    function createAwayOrderBoard() {
+
+      const board =
+        document.getElementById("away-order-board");
+
+      if (!board) return;
+
+      board.innerHTML = "";
+
+      const kansuji = [
+        "一",
+        "二",
+        "三",
+        "四",
+        "五",
+        "六",
+        "七",
+        "八",
+        "九"
+      ];
+
+      kansuji.forEach(order => {
+
+        const col =
+          document.createElement("div");
+
+        col.className =
+          "away-column";
+
+        col.innerHTML = `
+   <div class="away-order">
+    ${order}
+   </div>
+
+   <select class="away-player">
+
+     <option value="">選手名</option>
+
+   </select>
+
+   <select class="away-pos">
+
+   <option value="">守</option>
+
+   <option value="P">投</option>
+   <option value="C">捕</option>
+   <option value="1B">一</option>
+   <option value="2B">二</option>
+   <option value="3B">三</option>
+   <option value="SS">遊</option>
+   <option value="LF">左</option>
+   <option value="CF">中</option>
+   <option value="RF">右</option>
+   <option value="DH">DH</option>
+
+   </select>
+  `;
+
+        board.appendChild(col);
+
+      });
+
+    }
+
+    createAwayPitcherBoard();
+
+    function createAwayPitcherBoard() {
+
+      const roles = [
+        "先<br>発",
+        "二<br>番<br>手",
+        "三<br>番<br>手",
+        "四<br>番<br>手",
+        "五<br>番<br>手",
+        "六<br>番<br>手",
+        "中<br>継<br>一",
+        "中<br>継<br>二",
+        "中<br>継<br>三",
+        "抑<br>え"
+      ];
+
+      const board =
+        document.getElementById(
+          "away-pitcher-board"
+        );
+
+      if (!board) return;
+
+      board.innerHTML = "";
+
+      roles.forEach(role => {
+
+        const col =
+          document.createElement("div");
+
+        col.className =
+          "away-pitcher-column";
+
+        col.innerHTML = `
+    <div class="away-pitcher-role">
+     ${role}
+    </div>
+
+    <select class="away-pitcher-player">
+
+      <option value="">投手名</option>
+
+    </select>
+   `;
+
+        board.appendChild(col);
+
+      });
+
+    }
+
+    function createPitcherBoard() {
+
+      const roles = [
+        "先<br>発",
+        "二<br>番<br>手",
+        "三<br>番<br>手",
+        "四<br>番<br>手",
+        "五<br>番<br>手",
+        "六<br>番<br>手",
+        "中<br>継<br>一",
+        "中<br>継<br>二",
+        "中<br>継<br>三",
+        "抑<br>え"
+      ];
+
+      const board =
+        document.getElementById("pitcher-board");
+
+      board.innerHTML = "";
+
+      roles.forEach(role => {
+
+        const col =
+          document.createElement("div");
+
+        col.className =
+          "pitcher-column";
+
+        col.innerHTML = `
+   <div class="pitcher-role">
+    ${role}
+   </div>
+
+   <select class="pitcher-player">
+
+     <option value="">投手名</option>
+
+   </select>
+  `;
+
+        board.appendChild(col);
+
+      });
+
+    }
+
+
+
+    function updateKoshienPreview() {
+
+      const preview =
+        document.getElementById("koshien-preview");
+      console.log("preview update");
+
+      preview.innerHTML = "";
+
+      const kansuji =
+        ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+
+      const items =
+        document.querySelectorAll(".order-item");
+
+      console.log(items.length);
+
+      items.forEach((item, index) => {
+
+        const name =
+          item.querySelector(".player-select").value;
+
+        const pos =
+          item.querySelector(".position-select").value;
+
+        const col =
+          document.createElement("div");
+
+        col.className =
+          "preview-column";
+
+        col.innerHTML = `
+     <div class="preview-order">
+     ${kansuji[index + 1]}
+     </div>
+     <div class="preview-name">
+     ${name || "　"}
+     </div>
+     <div class="preview-pos">
+     ${convertPos(pos)}
+     </div>
+
+    `;
+
+        preview.appendChild(col);
+
+      });
+    }
+
+    function convertPos(pos) {
+
+      const map = {
+        "P": "投",
+        "C": "捕",
+        "1B": "一",
+        "2B": "二",
+        "3B": "三",
+        "SS": "遊",
+        "LF": "左",
+        "CF": "中",
+        "RF": "右",
+        "DH": "DH"
+      };
+
+      return map[pos] || "";
+    }
+    function setClock() {
+
+      const now =
+        new Date();
+
+      const hour =
+        now.getHours() % 12;
+
+      const minute =
+        now.getMinutes();
+
+      const hourDeg =
+        hour * 30 + minute * 0.5;
+
+      const minuteDeg =
+        minute * 6;
+
+      const hourHand =
+        document.getElementById(
+          "hour-hand"
+        );
+
+      const minuteHand =
+        document.getElementById(
+          "minute-hand"
+        );
+
+      if (hourHand) {
+
+        hourHand.style.transform =
+          `translateX(-50%)
+      rotate(${hourDeg}deg)`;
+      }
+
+      if (minuteHand) {
+
+        minuteHand.style.transform =
+          `translateX(-50%)
+      rotate(${minuteDeg}deg)`;
+      }
+
+    }
+
+    function testLamp() {
+
+      document
+        .querySelectorAll(".strike")
+        .forEach(
+          lamp => lamp.classList.remove("on")
+        );
+
+      document
+        .querySelector(".strike")
+        ?.classList.add("on");
+
+    }
+
+    updateKoshienPreview();
+
+    document
+      .getElementById("away-team")
+      .addEventListener("change", () => {
+
+        document
+          .getElementById("away-name")
+          .textContent =
+          document
+            .getElementById("away-team")
+            .value;
+
+      });
+
+    document
+      .getElementById("home-team")
+      .addEventListener("change", () => {
+
+        document
+          .getElementById("home-name")
+          .textContent =
+          document
+            .getElementById("home-team")
+            .value;
+
+      });
+
+    let currentTeamKey = "T";
+
+    let strikeCount = 0;
+    let ballCount = 0;
+    let outCount = 0;
+
+    function changeSBO(type) {
+
+      if (type === "S" && strikeCount < 2) {
+        strikeCount++;
+      }
+
+      if (type === "B" && ballCount < 3) {
+        ballCount++;
+      }
+
+      if (type === "O" && outCount < 2) {
+        outCount++;
+      }
+
+      updateSBO();
+    }
+
+    function resetSBO() {
+
+      strikeCount = 0;
+      ballCount = 0;
+      outCount = 0;
+
+      updateSBO();
+    }
+
+    function updateSBO() {
+
+      document
+        .querySelectorAll(".strike")
+        .forEach((lamp, i) => {
+
+          lamp.classList.toggle(
+            "on",
+            i < strikeCount
+          );
+
+        });
+
+      document
+        .querySelectorAll(".ball")
+        .forEach((lamp, i) => {
+
+          lamp.classList.toggle(
+            "on",
+            i < ballCount
+          );
+
+        });
+
+      document
+        .querySelectorAll(".out")
+        .forEach((lamp, i) => {
+
+          lamp.classList.toggle(
+            "on",
+            i < outCount
+          );
+
+        });
+
+    }
+
+    function updateRunTotal() {
+
+      let awayTotal = 0;
+
+      document
+        .querySelectorAll(".away.inning-score")
+        .forEach(input => {
+
+          awayTotal += Number(input.value) || 0;
+
+        });
+
+      document
+        .getElementById("away-run")
+        .value = awayTotal;
+
+
+      let homeTotal = 0;
+
+      document
+        .querySelectorAll(".home.inning-score")
+        .forEach(input => {
+
+          homeTotal += Number(input.value) || 0;
+
+        });
+
+      document
+        .getElementById("home-run")
+        .value = homeTotal;
+
+    }
+
+    document
+      .querySelectorAll(".inning-score")
+      .forEach(input => {
+
+        input.addEventListener(
+          "input",
+          updateRunTotal
+        );
+
+      });
+
+    updateRunTotal();
+
+    setClock();
+
+    setInterval(
+      setClock,
+      1000
+    );
+
+    /*==============================
+    現在選択中の球団
+    ==============================*/
+
+    const selectedTeams = {
+      current: "",
+      home: "",
+      away: ""
+    };
+
+    testLamp();
+
+    const teamNames = {
+      T: "Tigers",
+      G: "Giants",
+      D: "Dragons",
+      C: "Carp",
+      DB: "BayStars",
+      S: "Swallows",
+      H: "Hawks",
+      F: "Fighters",
+      M: "Marines",
+      E: "Eagles",
+      B: "Buffaloes",
+      L: "Lions"
+    };
+
+    let loadTarget = "home";
+
+    document.getElementById("load-home").addEventListener("click", () => {
+
+      loadTarget = "home";
+
+      document.getElementById("load-home").classList.add("active");
+      document.getElementById("load-away").classList.remove("active");
+
+    });
+
+    document.getElementById("load-away").addEventListener("click", () => {
+
+      loadTarget = "away";
+
+      document.getElementById("load-away").classList.add("active");
+      document.getElementById("load-home").classList.remove("active");
+
+    });
+    /*==============================
+    球団データ
+    ==============================*/
+
+    const teamPlayers = {
+      T: {
+        batters: [
+          { name: "近本", pos: "中" },
+          { name: "中野", pos: "二" },
+          { name: "森下", pos: "右" },
+          { name: "佐藤", pos: "三" },
+          { name: "大山", pos: "一" },
+
+          { name: "高寺", pos: "内" },
+          { name: "前川", pos: "左" },
+          { name: "中川", pos: "捕" },
+
+          { name: "小幡", pos: "遊" },
+          { name: "熊谷", pos: "内" },
+          { name: "木浪", pos: "遊" },
+
+          { name: "梅野", pos: "捕" },
+          { name: "坂本", pos: "捕" },
+          { name: "伏見", pos: "捕" },
+          { name: "榮枝", pos: "捕" },
+          { name: "長坂", pos: "捕" },
+          { name: "藤田", pos: "捕" },
+          { name: "町田", pos: "捕" },
+
+          { name: "糸原", pos: "二" },
+          { name: "植田", pos: "内" },
+          { name: "小野寺", pos: "外" },
+          { name: "嶋村", pos: "内" },
+
+          { name: "立石", pos: "内" },
+          { name: "福島", pos: "外" },
+          { name: "谷端", pos: "内" },
+          { name: "岡城", pos: "外" },
+          { name: "濱田", pos: "外" },
+          { name: "元山", pos: "内" },
+
+          { name: "豊田", pos: "外" },
+          { name: "島田", pos: "中" },
+
+          { name: "ディベイニー", pos: "内" },
+          { name: "西純", pos: "外" },
+          { name: "佐野", pos: "内" },
+          { name: "戸井", pos: "内" },
+          { name: "百崎", pos: "遊" },
+          { name: "山田", pos: "遊" },
+          { name: "アルナエス", pos: "遊" },
+          { name: "井坪", pos: "外" },
+          { name: "コンスエグラ", pos: "内" },
+          { name: "投手", pos: "内" },
+        ],
+        pitchers: [
+          "村上",
+          "高橋",
+          "伊藤将",
+          "才木",
+          "大竹",
+          "伊原",
+
+          "ドリス",
+          "畠",
+          "及川",
+          "桐敷",
+          "岩崎",
+          "湯浅",
+          "石井",
+          "富田",
+          "岡留",
+          "石黒",
+          "工藤",
+          "木下",
+          "津田",
+          "椎葉",
+
+          "モレッタ",
+          "ルーカス",
+          "ラグズデール",
+          "ルーカス",
+          "セベリーノ",
+
+          "西勇",
+          "門別",
+
+          "下村",
+          "今朝丸",
+          "茨木",
+          "早川",
+
+          "早瀬",
+          "能登",
+          "岩貞",
+          "マルチネス",
+          "松原",
+          "伊藤稜",
+          "神宮",
+        ]
+      },
+      G: {
+        batters: [
+          { name: "浦田", pos: "内" },
+          { name: "松本", pos: "外" },
+          { name: "泉口", pos: "遊" },
+          { name: "吉川", pos: "二" },
+          { name: "ダルベック", pos: "外" },
+          { name: "大城卓", pos: "捕" },
+          { name: "キャベッジ", pos: "外" },
+          { name: "岸田", pos: "捕" },
+          { name: "坂本", pos: "三" },
+          { name: "中山", pos: "外" },
+          { name: "リチャード", pos: "三" },
+          { name: "増田陸", pos: "一" },
+
+          { name: "門脇", pos: "遊" },
+          { name: "荒巻", pos: "内" },
+          { name: "湯浅", pos: "内" },
+          { name: "増田大", pos: "内" },
+
+          { name: "丸", pos: "中" },
+          { name: "萩尾", pos: "外" },
+          { name: "ティマ", pos: "一" },
+
+          { name: "甲斐", pos: "捕" },
+          { name: "小林", pos: "捕" },
+          { name: "山瀬", pos: "捕" },
+          { name: "郡", pos: "捕" },
+
+          { name: "若林", pos: "内" },
+          { name: "浅野", pos: "外" },
+
+          { name: "鈴木大和", pos: "外" },
+          { name: "舟越", pos: "外" },
+
+          { name: "佐々木", pos: "外" },
+          { name: "笹原", pos: "外" },
+
+          { name: "フルプ", pos: "内" },
+          { name: "三塚", pos: "外" },
+          { name: "宇都宮", pos: "内" },
+          { name: "皆川", pos: "外" },
+          { name: "岡田", pos: "外" },
+          { name: "藤井", pos: "三" },
+          { name: "小濱", pos: "内" },
+          { name: "石塚", pos: "遊" }
+        ],
+        pitchers: [
+          "竹丸",
+          "戸郷",
+          "山﨑",
+          "田中将",
+          "則本",
+          "井上",
+          "西舘",
+          "ウィットリー",
+
+          "高梨",
+          "田中瑛",
+          "中川",
+          "赤星",
+          "大勢",
+          "マルティネス",
+
+          "パワード",
+          "マタ",
+          "田和",
+          "山城",
+
+          "船迫",
+          "石川",
+          "横川",
+          "堀田",
+          "泉",
+          "平内",
+          "山田",
+          "堀田",
+
+          "バルドナード",
+          "松浦",
+          "北浦",
+          "宮原",
+          "又木",
+          "森田",
+        ]
+      },
+      DB: {
+        batters: [
+          { name: "桑原", pos: "中" },
+          { name: "梶原", pos: "中" },
+          { name: "蝦名", pos: "外" },
+          { name: "度会", pos: "右" },
+          { name: "関根", pos: "外" },
+          { name: "井上", pos: "外" },
+          { name: "勝又", pos: "外" },
+          { name: "東妻", pos: "外" },
+          { name: "筒香", pos: "左" },
+          { name: "佐野", pos: "一" },
+          { name: "牧", pos: "二" },
+          { name: "三森", pos: "二" },
+          { name: "林", pos: "遊" },
+          { name: "森敬", pos: "遊" },
+          { name: "京田", pos: "遊" },
+          { name: "柴田", pos: "内" },
+          { name: "石上", pos: "遊" },
+          { name: "加藤", pos: "内" },
+          { name: "田内", pos: "遊" },
+          { name: "宮﨑", pos: "三" },
+          { name: "井上絢登", pos: "三" },
+          { name: "知野", pos: "内" },
+          { name: "西巻", pos: "内" },
+          { name: "伊藤光", pos: "捕" },
+          { name: "山本", pos: "捕" },
+          { name: "松尾", pos: "捕" },
+          { name: "戸柱", pos: "捕" },
+          { name: "九鬼", pos: "捕" },
+          { name: "益子", pos: "捕" },
+          { name: "上甲", pos: "捕" },
+          { name: "蓮", pos: "捕" },
+          { name: "武田", pos: "外" },
+          { name: "小笠原", pos: "外" },
+          { name: "粟飯原", pos: "内" },
+          { name: "加藤響", pos: "内" },
+          { name: "小針", pos: "外" },
+          { name: "ディアス", pos: "外" },
+          { name: "井上晴哉", pos: "内" },
+          { name: "村田", pos: "外" }
+        ],
+
+        pitchers: [
+          "東",
+          "ジャクソン",
+          "ケイ",
+          "大貫",
+          "平良",
+          "石田裕",
+          "吉野",
+          "小園",
+          "竹田",
+          "坂本",
+          "森原",
+          "伊勢",
+          "入江",
+          "中川颯",
+          "宮城",
+          "颯",
+          "中川虎",
+          "堀岡",
+          "山﨑",
+          "岩田",
+          "浜地",
+          "徳山",
+          "京山",
+          "松本隆",
+          "佐々木",
+          "庄司",
+          "篠木",
+          "若松",
+          "武田",
+          "石田健",
+          "渡辺",
+          "ディアス",
+          "マルセリーノ",
+          "森下",
+          "笠谷",
+          "深沢",
+          "草野",
+          "今野",
+          "庄司陽斗",
+          "橋本"
+        ]
+      },
+      C: {
+        batters: [
+          { name: "秋山", pos: "中" },
+          { name: "野間", pos: "外" },
+          { name: "末包", pos: "右" },
+          { name: "中村奨成", pos: "外" },
+          { name: "田村", pos: "外" },
+          { name: "二俣", pos: "外" },
+          { name: "久保", pos: "外" },
+          { name: "林", pos: "三" },
+          { name: "小園", pos: "遊" },
+          { name: "矢野", pos: "遊" },
+          { name: "菊池", pos: "二" },
+          { name: "羽月", pos: "内" },
+          { name: "上本", pos: "内" },
+          { name: "佐々木", pos: "三" },
+          { name: "山足", pos: "内" },
+          { name: "韮澤", pos: "内" },
+          { name: "仲田", pos: "内" },
+          { name: "モンテロ", pos: "一" },
+          { name: "堂林", pos: "一" },
+          { name: "田中", pos: "遊" },
+          { name: "坂倉", pos: "捕" },
+          { name: "會澤", pos: "捕" },
+          { name: "石原", pos: "捕" },
+          { name: "清水", pos: "捕" },
+          { name: "髙木", pos: "捕" },
+          { name: "持丸", pos: "捕" },
+          { name: "磯村", pos: "捕" },
+          { name: "内田", pos: "一" },
+          { name: "渡邉", pos: "内" },
+          { name: "前川", pos: "外" },
+          { name: "名原", pos: "外" },
+          { name: "中村貴浩", pos: "外" },
+          { name: "宇草", pos: "外" },
+          { name: "中村健人", pos: "外" },
+          { name: "ロベルト", pos: "外" },
+          { name: "ラミレス", pos: "外" },
+          { name: "辻", pos: "内" },
+          { name: "佐藤啓介", pos: "内" },
+          { name: "岡田", pos: "内" },
+          { name: "斉藤優汰", pos: "一" }
+        ],
+
+        pitchers: [
+          "森下",
+          "床田",
+          "大瀬良",
+          "玉村",
+          "アドゥワ",
+          "常廣",
+          "森",
+          "高",
+          "黒原",
+          "森浦",
+          "栗林",
+          "島内",
+          "塹江",
+          "ハーン",
+          "岡本",
+          "中﨑",
+          "益田",
+          "滝田",
+          "高橋",
+          "鈴木",
+          "遠藤",
+          "河野",
+          "大道",
+          "斉藤",
+          "長谷部",
+          "松本",
+          "小林",
+          "辻",
+          "佐藤柳",
+          "赤木",
+          "工藤",
+          "高木",
+          "杉田",
+          "日高",
+          "佐々木",
+          "ケムナ",
+          "滝口",
+          "遠藤淳",
+          "髙太一",
+          "杉原"
+        ]
+      },
+      S: {
+        batters: [
+          { name: "長岡", pos: "遊" },
+          { name: "山田", pos: "二" },
+          { name: "赤羽", pos: "内" },
+          { name: "武岡", pos: "遊" },
+          { name: "伊藤", pos: "内" },
+          { name: "北村拓", pos: "内" },
+          { name: "川端", pos: "三" },
+          { name: "茂木", pos: "三" },
+          { name: "村上", pos: "三" },
+          { name: "オスナ", pos: "一" },
+          { name: "増田", pos: "一" },
+          { name: "宮本", pos: "外" },
+          { name: "並木", pos: "中" },
+          { name: "岩田", pos: "外" },
+          { name: "西川", pos: "左" },
+          { name: "塩見", pos: "中" },
+          { name: "丸山和", pos: "中" },
+          { name: "丸山翔", pos: "外" },
+          { name: "澤井", pos: "外" },
+          { name: "濱田", pos: "右" },
+          { name: "内山", pos: "捕" },
+          { name: "松本直", pos: "捕" },
+          { name: "古賀", pos: "捕" },
+          { name: "中村悠", pos: "捕" },
+          { name: "橋本", pos: "捕" },
+          { name: "鈴木叶", pos: "捕" },
+          { name: "西村", pos: "捕" },
+          { name: "太田", pos: "内" },
+          { name: "小森", pos: "内" },
+          { name: "橋本星", pos: "内" },
+          { name: "モイセエフ", pos: "外" },
+          { name: "根岸", pos: "外" },
+          { name: "高野", pos: "外" },
+          { name: "田中陽", pos: "内" },
+          { name: "永田", pos: "外" },
+          { name: "矢野", pos: "内" },
+          { name: "西村瑠", pos: "外" },
+          { name: "松井", pos: "内" },
+          { name: "西田", pos: "捕" },
+          { name: "フェリペ", pos: "捕" }
+        ],
+
+        pitchers: [
+          "吉村",
+          "高橋",
+          "奥川",
+          "山野",
+          "ランバート",
+          "アビラ",
+          "石川",
+          "小川",
+          "高梨",
+          "山下",
+          "阪口",
+          "原",
+          "松本健",
+          "中村優",
+          "下川",
+          "柴田",
+          "清水",
+          "木澤",
+          "星",
+          "田口",
+          "荘司",
+          "大西",
+          "山本",
+          "丸山翔大",
+          "矢崎",
+          "小澤",
+          "沼田",
+          "バウマン",
+          "嘉弥真",
+          "宮川",
+          "竹山",
+          "金久保",
+          "柴田大",
+          "坂本",
+          "松本龍",
+          "石原",
+          "長谷川",
+          "山本大",
+          "中尾",
+          "佐藤"
+        ]
+      },
+      D: {
+        batters: [
+          { name: "岡林", pos: "中" },
+          { name: "上林", pos: "右" },
+          { name: "細川", pos: "右" },
+          { name: "ブライト", pos: "外" },
+          { name: "尾田", pos: "外" },
+          { name: "鵜飼", pos: "外" },
+          { name: "濱", pos: "外" },
+          { name: "樋口", pos: "外" },
+          { name: "後藤", pos: "外" },
+          { name: "中田", pos: "一" },
+          { name: "ボスラー", pos: "一" },
+          { name: "石川昂", pos: "三" },
+          { name: "福永", pos: "二" },
+          { name: "村松", pos: "遊" },
+          { name: "山本", pos: "二" },
+          { name: "辻本", pos: "遊" },
+          { name: "土田", pos: "遊" },
+          { name: "津田", pos: "三" },
+          { name: "ロドリゲス", pos: "内" },
+          { name: "川上", pos: "内" },
+          { name: "田中", pos: "内" },
+          { name: "板山", pos: "外" },
+          { name: "宇佐見", pos: "捕" },
+          { name: "木下", pos: "捕" },
+          { name: "石橋", pos: "捕" },
+          { name: "加藤匠", pos: "捕" },
+          { name: "味谷", pos: "捕" },
+          { name: "山浅", pos: "捕" },
+          { name: "日渡", pos: "捕" },
+          { name: "川越", pos: "外" },
+          { name: "駿太", pos: "外" },
+          { name: "石伊", pos: "捕" },
+          { name: "津田啓史", pos: "内" },
+          { name: "モニエル", pos: "外" },
+          { name: "星野", pos: "内" },
+          { name: "森駿太", pos: "内" },
+          { name: "津波", pos: "外" },
+          { name: "福元", pos: "外" },
+          { name: "龍空", pos: "遊" },
+          { name: "C.ロドリゲス", pos: "内" }
+        ],
+
+        pitchers: [
+          "高橋宏",
+          "松葉",
+          "涌井",
+          "柳",
+          "金丸",
+          "大野",
+          "仲地",
+          "梅津",
+          "草加",
+          "三浦",
+          "根尾",
+          "マラー",
+          "メヒア",
+          "松木平",
+          "髙橋幸",
+          "清水",
+          "松山",
+          "齋藤",
+          "藤嶋",
+          "勝野",
+          "橋本",
+          "祖父江",
+          "福",
+          "岡田",
+          "梅野",
+          "近藤",
+          "福田",
+          "石森",
+          "土生",
+          "森山",
+          "野中",
+          "森",
+          "井上",
+          "ウォルターズ",
+          "岩嵜",
+          "岡留",
+          "加藤翼",
+          "吉田",
+          "垣越",
+          "菊田"
+        ]
+      },
+      H: {
+        batters: [
+          { name: "周東", pos: "中" },
+          { name: "近藤", pos: "左" },
+          { name: "柳田", pos: "右" },
+          { name: "栗原", pos: "三" },
+          { name: "山川", pos: "一" },
+          { name: "今宮", pos: "遊" },
+          { name: "牧原大", pos: "二" },
+          { name: "川瀬", pos: "遊" },
+          { name: "ダウンズ", pos: "二" },
+          { name: "野村勇", pos: "遊" },
+          { name: "廣瀨", pos: "二" },
+          { name: "川村", pos: "外" },
+          { name: "佐藤直", pos: "外" },
+          { name: "正木", pos: "外" },
+          { name: "笹川", pos: "外" },
+          { name: "緒方", pos: "外" },
+          { name: "井上", pos: "外" },
+          { name: "石塚", pos: "内" },
+          { name: "リチャード", pos: "三" },
+          { name: "勝連", pos: "内" },
+          { name: "渡邉陸", pos: "捕" },
+          { name: "海野", pos: "捕" },
+          { name: "嶺井", pos: "捕" },
+          { name: "谷川原", pos: "捕" },
+          { name: "牧原巧", pos: "捕" },
+          { name: "石見", pos: "捕" },
+          { name: "イヒネ", pos: "遊" },
+          { name: "藤野", pos: "内" },
+          { name: "仲田", pos: "内" },
+          { name: "桑原", pos: "外" },
+          { name: "大泉", pos: "外" },
+          { name: "佐倉", pos: "一" },
+          { name: "山本", pos: "外" },
+          { name: "シモン", pos: "内" },
+          { name: "アルモンテ", pos: "外" },
+          { name: "重松", pos: "外" },
+          { name: "藤田", pos: "捕" },
+          { name: "盛島", pos: "捕" },
+          { name: "西尾", pos: "内" },
+          { name: "川原田", pos: "内" }
+        ],
+
+        pitchers: [
+          "有原",
+          "モイネロ",
+          "上沢",
+          "大関",
+          "前田純",
+          "東浜",
+          "伊藤",
+          "前田悠",
+          "松本晴",
+          "大津",
+          "杉山",
+          "松本裕",
+          "ヘルナンデス",
+          "オスナ",
+          "藤井",
+          "津森",
+          "尾形",
+          "木村大",
+          "岩井",
+          "長谷川",
+          "又吉",
+          "岩崎",
+          "田浦",
+          "濵口",
+          "板東",
+          "田上",
+          "前田悠伍",
+          "風間",
+          "村田",
+          "木村光",
+          "大野",
+          "宮里",
+          "アルメンタ",
+          "川口",
+          "星野",
+          "三浦",
+          "村上",
+          "藤原",
+          "岡植",
+          "ハモンド"
+        ]
+      },
+
+      F: {
+        batters: [
+          { name: "水谷", pos: "右" },
+          { name: "万波", pos: "右" },
+          { name: "五十幡", pos: "中" },
+          { name: "矢澤", pos: "中" },
+          { name: "浅間", pos: "外" },
+          { name: "今川", pos: "外" },
+          { name: "松本剛", pos: "左" },
+          { name: "宮崎", pos: "外" },
+          { name: "吉田", pos: "外" },
+          { name: "清宮", pos: "三" },
+          { name: "野村", pos: "三" },
+          { name: "有薗", pos: "一" },
+          { name: "郡司", pos: "捕" },
+          { name: "清水", pos: "捕" },
+          { name: "伏見", pos: "捕" },
+          { name: "田宮", pos: "捕" },
+          { name: "進藤", pos: "捕" },
+          { name: "梅林", pos: "捕" },
+          { name: "リン", pos: "捕" },
+          { name: "マルティネス", pos: "捕" },
+          { name: "レイエス", pos: "一" },
+          { name: "奈良間", pos: "遊" },
+          { name: "上川畑", pos: "遊" },
+          { name: "山縣", pos: "遊" },
+          { name: "中島", pos: "遊" },
+          { name: "細川", pos: "二" },
+          { name: "石井", pos: "二" },
+          { name: "カストロ", pos: "内" },
+          { name: "明瀬", pos: "内" },
+          { name: "古川", pos: "外" },
+          { name: "阪口", pos: "外" },
+          { name: "柴田", pos: "外" },
+          { name: "星野ひので", pos: "外" },
+          { name: "山口アタル", pos: "外" },
+          { name: "藤田", pos: "外" },
+          { name: "濵田", pos: "内" },
+          { name: "常谷", pos: "内" },
+          { name: "平田", pos: "捕" },
+          { name: "孫易磊", pos: "外" },
+          { name: "藤島", pos: "内" }
+        ],
+
+        pitchers: [
+          "伊藤",
+          "北山",
+          "加藤",
+          "山﨑",
+          "達",
+          "金村",
+          "細野",
+          "古林",
+          "松浦",
+          "生田目",
+          "玉井",
+          "杉浦",
+          "宮西",
+          "河野",
+          "池田",
+          "齋藤",
+          "田中",
+          "福島",
+          "柳川",
+          "堀",
+          "松岡",
+          "山本拓",
+          "根本",
+          "上原",
+          "畔柳",
+          "浅利",
+          "柴田",
+          "孫",
+          "達澤",
+          "ラオ",
+          "清宮虎多朗",
+          "松本遼",
+          "宮内",
+          "加藤大和",
+          "川勝",
+          "澁谷",
+          "横山",
+          "安西",
+          "福田",
+          "福谷"
+        ]
+      },
+
+      M: {
+        batters: [
+          { name: "高部", pos: "中" },
+          { name: "西川", pos: "右" },
+          { name: "藤原", pos: "中" },
+          { name: "和田", pos: "外" },
+          { name: "山口", pos: "右" },
+          { name: "山本", pos: "外" },
+          { name: "愛斗", pos: "外" },
+          { name: "角中", pos: "左" },
+          { name: "ポランコ", pos: "左" },
+          { name: "ソト", pos: "一" },
+          { name: "上田", pos: "一" },
+          { name: "安田", pos: "三" },
+          { name: "中村奨", pos: "二" },
+          { name: "藤岡", pos: "二" },
+          { name: "池田", pos: "三" },
+          { name: "友杉", pos: "遊" },
+          { name: "小川", pos: "遊" },
+          { name: "宮崎", pos: "内" },
+          { name: "立松", pos: "内" },
+          { name: "石垣雅", pos: "内" },
+          { name: "田村", pos: "捕" },
+          { name: "寺地", pos: "捕" },
+          { name: "佐藤", pos: "捕" },
+          { name: "松川", pos: "捕" },
+          { name: "岡村", pos: "捕" },
+          { name: "富山", pos: "捕" },
+          { name: "井上", pos: "外" },
+          { name: "石川慎", pos: "外" },
+          { name: "杉山", pos: "外" },
+          { name: "勝又", pos: "内" },
+          { name: "櫻井", pos: "内" },
+          { name: "谷村", pos: "内" },
+          { name: "金田", pos: "内" },
+          { name: "山﨑", pos: "内" },
+          { name: "髙野", pos: "外" },
+          { name: "藤田", pos: "外" },
+          { name: "アセベド", pos: "外" },
+          { name: "西村", pos: "捕" },
+          { name: "宮崎竜", pos: "内" },
+          { name: "宮内", pos: "内" }
+        ],
+
+        pitchers: [
+          "カスティーヨ",
+          "毛利",
+          "小島",
+          "横山",
+          "種市",
+          "石垣元",
+          "唐川",
+          "石川柊",
+          "東妻",
+          "菊地",
+          "西野",
+          "廣畑",
+          "大谷",
+          "八木",
+          "高野",
+          "田中晴",
+          "坂本",
+          "小野",
+          "一條",
+          "鈴木",
+          "中村稔",
+          "益田",
+          "木村",
+          "中森",
+          "澤村",
+          "ゲレーロ",
+          "ジャクソン",
+          "宮﨑",
+          "秋山",
+          "廣池",
+          "早坂",
+          "河村",
+          "高橋",
+          "吉川",
+          "古谷",
+          "黒木",
+          "坂井",
+          "土居",
+          "廣瀬",
+          "田中大"
+        ]
+      },
+
+      E: {
+        batters: [
+          { name: "辰己", pos: "中" },
+          { name: "小郷", pos: "右" },
+          { name: "中島", pos: "左" },
+          { name: "岡島", pos: "外" },
+          { name: "武藤", pos: "外" },
+          { name: "吉野", pos: "外" },
+          { name: "前田銀", pos: "外" },
+          { name: "柳澤", pos: "外" },
+          { name: "吉納", pos: "外" },
+          { name: "阿部", pos: "一" },
+          { name: "浅村", pos: "一" },
+          { name: "フランコ", pos: "一" },
+          { name: "鈴木大", pos: "二" },
+          { name: "黒川", pos: "二" },
+          { name: "村林", pos: "遊" },
+          { name: "宗山", pos: "遊" },
+          { name: "伊藤", pos: "三" },
+          { name: "渡邊佳", pos: "内" },
+          { name: "入江", pos: "内" },
+          { name: "永田", pos: "内" },
+          { name: "山田", pos: "内" },
+          { name: "ワォーターズ", pos: "内" },
+          { name: "青野", pos: "内" },
+          { name: "辰見", pos: "内" },
+          { name: "堀内", pos: "捕" },
+          { name: "太田", pos: "捕" },
+          { name: "石原", pos: "捕" },
+          { name: "安田", pos: "捕" },
+          { name: "水上", pos: "捕" },
+          { name: "江川", pos: "捕" },
+          { name: "島原", pos: "捕" },
+          { name: "平良", pos: "外" },
+          { name: "岸本", pos: "内" },
+          { name: "陽", pos: "内" },
+          { name: "大内", pos: "外" },
+          { name: "柴田", pos: "外" },
+          { name: "中込", pos: "外" },
+          { name: "佐藤", pos: "外" },
+          { name: "金子", pos: "内" },
+          { name: "清水", pos: "捕" }
+        ],
+
+        pitchers: [
+          "早川",
+          "藤井",
+          "内",
+          "古謝",
+          "岸",
+          "辛島",
+          "瀧中",
+          "ヤフーレ",
+          "ハワード",
+          "松井",
+          "荘司",
+          "古賀",
+          "渡辺翔",
+          "則本",
+          "西口",
+          "藤平",
+          "今野",
+          "酒居",
+          "鈴木翔",
+          "宋",
+          "中込",
+          "林",
+          "泰",
+          "王",
+          "日當",
+          "松田",
+          "宮森",
+          "津留﨑",
+          "小孫",
+          "江原",
+          "坂井",
+          "柴田",
+          "大内",
+          "王彦程",
+          "清宮",
+          "吉川",
+          "西垣",
+          "竹下",
+          "井上",
+          "松本"
+        ]
+      },
+
+      Bs: {
+        batters: [
+          { name: "中川", pos: "左" },
+          { name: "西川", pos: "左" },
+          { name: "杉本", pos: "右" },
+          { name: "来田", pos: "中" },
+          { name: "麦谷", pos: "中" },
+          { name: "渡部", pos: "外" },
+          { name: "茶野", pos: "外" },
+          { name: "元", pos: "外" },
+          { name: "池田", pos: "外" },
+          { name: "山中", pos: "外" },
+          { name: "頓宮", pos: "一" },
+          { name: "森", pos: "捕" },
+          { name: "若月", pos: "捕" },
+          { name: "福永", pos: "捕" },
+          { name: "堀", pos: "捕" },
+          { name: "内藤", pos: "一" },
+          { name: "ディアス", pos: "一" },
+          { name: "太田", pos: "二" },
+          { name: "大里", pos: "二" },
+          { name: "紅林", pos: "遊" },
+          { name: "宗", pos: "三" },
+          { name: "廣岡", pos: "三" },
+          { name: "野口", pos: "遊" },
+          { name: "横山", pos: "内" },
+          { name: "河野", pos: "内" },
+          { name: "遠藤", pos: "内" },
+          { name: "佐野", pos: "内" },
+          { name: "香月", pos: "内" },
+          { name: "宜保", pos: "遊" },
+          { name: "山足", pos: "内" },
+          { name: "福田", pos: "外" },
+          { name: "宇田川", pos: "外" },
+          { name: "佐藤", pos: "捕" },
+          { name: "福永裕", pos: "捕" },
+          { name: "村上", pos: "内" },
+          { name: "木下", pos: "外" },
+          { name: "才木", pos: "外" },
+          { name: "柴田", pos: "外" },
+          { name: "佐藤一", pos: "内" },
+          { name: "山本", pos: "内" }
+        ],
+
+        pitchers: [
+          "宮城",
+          "九里",
+          "曽谷",
+          "田嶋",
+          "東",
+          "椋木",
+          "エスピノーザ",
+          "寺西",
+          "齋藤",
+          "高島",
+          "山下",
+          "山岡",
+          "阿部",
+          "本田",
+          "山田",
+          "川瀬",
+          "古田島",
+          "ペルドモ",
+          "マチャド",
+          "才木",
+          "権田",
+          "片山",
+          "富山",
+          "小木田",
+          "吉田",
+          "横山",
+          "博志",
+          "宇田川",
+          "入山",
+          "前",
+          "芦田",
+          "東松",
+          "佐藤",
+          "堀",
+          "平野",
+          "井口",
+          "小野",
+          "中田",
+          "山崎",
+          "高橋"
+        ]
+      },
+
+      L: {
+        batters: [
+          { name: "西川", pos: "中" },
+          { name: "長谷川", pos: "外" },
+          { name: "渡部聖", pos: "右" },
+          { name: "岸", pos: "外" },
+          { name: "蛭間", pos: "外" },
+          { name: "仲田", pos: "外" },
+          { name: "松原", pos: "外" },
+          { name: "鈴木", pos: "外" },
+          { name: "セデーニョ", pos: "一" },
+          { name: "村田", pos: "一" },
+          { name: "ネビン", pos: "一" },
+          { name: "外崎", pos: "三" },
+          { name: "佐藤龍", pos: "三" },
+          { name: "滝澤", pos: "遊" },
+          { name: "源田", pos: "遊" },
+          { name: "児玉", pos: "遊" },
+          { name: "山村", pos: "内" },
+          { name: "平沢", pos: "内" },
+          { name: "元山", pos: "内" },
+          { name: "野村大", pos: "内" },
+          { name: "黒田", pos: "内" },
+          { name: "古川", pos: "内" },
+          { name: "炭谷", pos: "捕" },
+          { name: "古賀", pos: "捕" },
+          { name: "牧野", pos: "捕" },
+          { name: "柘植", pos: "捕" },
+          { name: "古市", pos: "捕" },
+          { name: "是澤", pos: "捕" },
+          { name: "野田", pos: "捕" },
+          { name: "齋藤", pos: "捕" },
+          { name: "モンテル", pos: "外" },
+          { name: "林", pos: "内" },
+          { name: "金子", pos: "外" },
+          { name: "高松", pos: "内" },
+          { name: "奥村", pos: "内" },
+          { name: "ガルシア", pos: "外" },
+          { name: "佐藤太", pos: "内" },
+          { name: "仲三河", pos: "外" },
+          { name: "古川雄", pos: "外" },
+          { name: "龍山", pos: "内" }
+        ],
+
+        pitchers: [
+          "今井",
+          "隅田",
+          "武内",
+          "渡邉",
+          "與座",
+          "高橋光",
+          "菅井",
+          "羽田",
+          "松本",
+          "ボー",
+          "ウィンゲンター",
+          "平良",
+          "甲斐野",
+          "ラミレス",
+          "佐藤隼",
+          "黒木",
+          "田村",
+          "山田",
+          "中村",
+          "黒田",
+          "篠原",
+          "上田",
+          "浜屋",
+          "糸川",
+          "青山",
+          "杉山",
+          "豆田",
+          "宮澤",
+          "大曲",
+          "シンクレア",
+          "ロペス",
+          "三浦",
+          "井上",
+          "木瀬",
+          "杉井",
+          "川下",
+          "冨士",
+          "成田",
+          "菅原",
+          "水上"
+        ]
+      },
+
+    };
+
+    function loadBatters(side, team) {
+
+      const players =
+        document.querySelectorAll(
+
+          side === "home"
+            ? ".board-player"
+            : ".away-player"
+
+        );
+
+      players.forEach(select => {
+
+        /* 一度全部消す */
+
+        select.innerHTML =
+          '<option value="">選手名</option>';
+
+        /* 選手追加 */
+
+        teamPlayers[team].batters.forEach(player => {
+
+          const option =
+            document.createElement("option");
+
+          option.value = player.name;
+
+          option.textContent = player.name;
+
+          select.appendChild(option);
+
+        });
+
+      });
+
+    }
+
+    function loadPitchers(side, team) {
+
+      const players =
+        document.querySelectorAll(
+
+          side === "home"
+            ? ".pitcher-player"
+            : ".away-pitcher-player"
+
+        );
+
+      players.forEach(select => {
+
+        /* 一度全部消す */
+
+        select.innerHTML =
+          '<option value="">投手名</option>';
+
+        /* 投手追加 */
+
+        teamPlayers[team].pitchers.forEach(player => {
+
+          const option =
+            document.createElement("option");
+
+          option.value = player;
+          option.textContent = player;
+
+          select.appendChild(option);
+
+        });
+
+      });
+
+    }
+
+    function showPlayerList(team) {
+      const list =
+        document.getElementById("team-player-list");
+      list.innerHTML = "";
+      teamPlayers[team].batters.forEach(player => {
+        const row =
+          document.createElement("div");
+        row.className = "player-row";
+        row.textContent =
+          player.name + "　" + player.pos;
+        list.appendChild(row);
+      });
+      document.getElementById("team-player-title").textContent =
+        teamNames[team];
+      document.getElementById("team-player-popup").style.display =
+        "flex";
+    }
+
+    function updateFlags() {
+
+      const away =
+        document.getElementById("away-team").value;
+
+      const home =
+        document.getElementById("home-team").value;
+
+      const awayFlag =
+        document.getElementById("away-flag");
+
+      const homeFlag =
+        document.getElementById("home-flag");
+
+      const teamText = {
+        T: "HT",
+        G: "YG",
+        D: "CD",
+        C: "CC",
+        DB: "DB",
+        S: "YS",
+
+        H: "SH",
+        F: "NF",
+        M: "LM",
+        E: "RE",
+        B: "Bs",
+        L: "SL"
+      };
+
+      awayFlag.textContent =
+        teamText[away];
+
+      homeFlag.textContent =
+        teamText[home];
+
+      document.getElementById("away-team-display").textContent =
+        teamNames[away];
+
+      document.getElementById("home-team-display").textContent =
+        teamNames[home];
+
+      awayFlag.className = "team-flag";
+      homeFlag.className = "team-flag";
+
+      const teamClass = {
+        T: "tigers",
+        G: "giants",
+        D: "dragons",
+        C: "carp",
+        DB: "baystars",
+        S: "swallows",
+        H: "hawks",
+        F: "fighters",
+        M: "marines",
+        E: "eagles",
+        B: "buffaloes",
+        L: "lions"
+      };
+
+      document.querySelectorAll(".team-load").forEach(button => {
+        const team = button.dataset.team;
+        button.classList.add(teamClass[team]);
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".team-load").forEach(btn => {
+            btn.classList.remove("active");
+          });
+          button.classList.add("active");
+          selectedTeams.current = team;
+          currentTeamKey = team;
+          document.getElementById("team-select-popup").style.display = "flex";
+        });
+      });
+
+      /* キャンセルボタン */
+
+      document
+        .getElementById("popup-cancel")
+        .addEventListener("click", () => {
+          document
+            .getElementById("team-select-popup")
+            .style.display = "none";
+        });
+
+      document
+        .getElementById("popup-home")
+        .addEventListener("click", () => {
+
+          selectedTeams.home = selectedTeams.current;
+
+          document.getElementById("home-team").value =
+            selectedTeams.home;
+
+          document.getElementById("home-team-display").textContent =
+            teamNames[selectedTeams.home];
+
+          updateFlags();
+
+          loadBatters("home", selectedTeams.home);
+          loadPitchers("home", selectedTeams.home);
+          document.getElementById("team-select-popup").style.display = "none";
+
+        });
+
+      document
+        .getElementById("popup-away")
+        .addEventListener("click", () => {
+
+          selectedTeams.away = selectedTeams.current;
+
+          document.getElementById("away-team").value =
+            selectedTeams.away;
+
+          document.getElementById("away-team-display").textContent =
+            teamNames[selectedTeams.away];
+
+          updateFlags();
+
+          loadBatters("away", selectedTeams.away);
+
+          loadPitchers("away", selectedTeams.away);
+
+          document.getElementById("team-select-popup").style.display = "none";
+
+        });
+
+      awayFlag.classList.add(teamClass[away]);
+      homeFlag.classList.add(teamClass[home]);
+
+      document.getElementById("away-name").textContent =
+        teamText[away];
+
+      document.getElementById("home-name").textContent =
+        teamText[home];
+
+      document.getElementById("away-team-display").className =
+        "team-display " + teamClass[away];
+
+      document.getElementById("home-team-display").className =
+        "team-display " + teamClass[home];
+    }
+
+    document
+      .getElementById("away-team")
+      .addEventListener(
+        "change",
+        () => {
+
+          updateFlags();
+
+          awayHeader.classList.remove("editing");
+
+        }
+      );
+
+    document
+      .getElementById("home-team")
+      .addEventListener(
+        "change",
+        () => {
+
+          updateFlags();
+
+          homeHeader.classList.remove("editing");
+
+        }
+      );
+
+    updateFlags();
+
+    const awayHeader =
+      document.querySelector("#away-team-area .team-header");
+
+    const awayDisplay =
+      document.getElementById("away-team-display");
+
+    const homeHeader =
+      document.querySelectorAll("#away-team-area .team-header")[1];
+
+    const homeDisplay =
+      document.getElementById("home-team-display");
+
+    homeDisplay.addEventListener("click", () => {
+
+      homeHeader.classList.add("editing");
+
+      document.getElementById("home-team").focus();
+
+    });
+
+    awayDisplay.addEventListener("click", () => {
+
+      awayHeader.classList.add("editing");
+
+      document.getElementById("away-team").focus();
+
+    });
+
+    document.querySelectorAll("select").forEach(select => {
+
+      select.addEventListener("change", () => {
+
+        applySelectFixed();
+
+      });
+
+      select.addEventListener("focus", () => {
+
+        select.classList.remove("select-fixed");
+
+      });
+
+    });
+
+    function applySelectFixed() {
+
+      document.querySelectorAll("select").forEach(select => {
+
+        if (select.value !== "") {
+          select.classList.add("select-fixed");
+        } else {
+          select.classList.remove("select-fixed");
+        }
+
+      });
+
+    }
+
+    document
+      .getElementById("player-close")
+      .addEventListener("click", () => {
+
+        document
+          .getElementById("team-player-popup")
+          .style.display = "none";
+
+      });
+
+  </script>
+
+</body>
+
+</html>
