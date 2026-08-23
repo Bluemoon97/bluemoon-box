@@ -1,0 +1,3047 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!-- ========================================
+         Shopping Support
+         Version 0.1.0
+         ホーム画面
+         ======================================== -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cocartly</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- ========================================
+     Cocartly アプリアイコン
+     ======================================== -->
+
+    <!-- iPhone / iPad ホーム画面用 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+    <!-- 通常のブラウザ・PWA用 -->
+    <link rel="icon" type="image/png" sizes="192x192" href="images/cocartly-icon-192.png">
+
+    <link rel="icon" type="image/png" sizes="512x512" href="images/cocartly-icon-512.png">
+
+    <!-- JavaScript -->
+    <script defer src="js/data/maker.js"></script>
+    <script defer src="js/data/category.js"></script>
+    <script defer src="js/data/product.js"></script>
+    <script defer src="js/data/store.js"></script>
+    <script defer src="js/data/price.js"></script>
+    <script defer src="js/history.js"></script>
+    <script defer src="js/router.js"></script>
+    <script defer src="js/app.js"></script>
+</head>
+
+<body>
+
+    <!-- ========================================
+         PC・タブレット表示
+         ======================================== -->
+    <div id="desktop-message">
+
+        <h1>⚠️</h1>
+
+        <p>
+            Shopping Support はスマートフォン専用です。
+        </p>
+
+        <p>
+            PC・タブレットではご利用いただけません。
+        </p>
+
+    </div>
+
+    <!-- 横向き案内 -->
+    <div id="orientationMessage" hidden>
+
+        <div class="orientationContent">
+
+            <div class="orientationIcon">
+                ↻
+            </div>
+
+            <h2>
+                スマートフォンを縦向きにしてください
+            </h2>
+
+            <p>
+                このアプリは縦向きでの使用に最適化されています。
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================
+         スマホ画面
+         ======================================== -->
+    <main id="app">
+
+        <!-- ホーム画面 -->
+        <section id="homeScreen">
+
+            <header class="home-header">
+
+                <img src="images/cocartly-logo.png" alt="Cocartly" class="home-logo">
+
+                <p class="home-catch">
+                    買い物を、もっとスマートに。
+                </p>
+
+            </header>
+
+            <nav>
+
+                <div class="home-code-area">
+
+                    <button type="button" id="btnCode" class="home-diamond-button home-diamond-main">
+
+                        <span class="home-code-icon">
+                            📷
+                        </span>
+
+                        <span class="home-code-label">
+                            コード読取
+                        </span>
+
+                    </button>
+
+                </div>
+
+                <div class="home-main-grid">
+
+                    <button type="button" id="btnProduct" class="home-hex-button">
+
+                        <span class="home-main-icon">
+                            ➕
+                        </span>
+
+                        <span class="home-main-label">
+                            商品登録
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" id="btnShopping" class="home-hex-button">
+
+                        <span class="home-main-icon">
+                            🛒
+                        </span>
+
+                        <span class="home-main-label">
+                            購入予定
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" id="btnHistory" class="home-hex-button">
+
+                        <span class="home-main-icon">
+                            📊
+                        </span>
+
+                        <span class="home-main-label">
+                            履歴・<br>
+                            価格比較
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" id="btnCheck" class="home-hex-button">
+
+                        <span class="home-main-icon">
+                            🎒
+                        </span>
+
+                        <span class="home-main-label">
+                            お出かけ<br>
+                            チェック
+                        </span>
+
+                    </button>
+
+                </div>
+
+                <div class="home-utility-buttons">
+
+                    <div class="home-utility-item">
+
+                        <button type="button" id="btnNotice" class="home-diamond-button home-diamond-small"
+                            aria-label="お知らせ">
+
+                            <span class="home-diamond-icon">
+                                ✉️
+                            </span>
+
+                        </button>
+
+                        <span class="home-utility-label">
+                            お知らせ
+                        </span>
+
+                    </div>
+
+
+                    <div class="home-utility-item">
+
+                        <button type="button" id="btnSettings" class="home-diamond-button home-diamond-small"
+                            aria-label="設定">
+
+                            <span class="home-diamond-icon">
+                                ⚙️
+                            </span>
+
+                        </button>
+
+                        <span class="home-utility-label">
+                            設定
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </nav>
+
+        </section>
+
+        <!-- ========================================
+             お知らせ画面
+             ======================================== -->
+
+        <section id="noticeScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackNotice" class="screen-back-button">
+
+                    ← 🏠 ホームへ
+
+                </button>
+
+                <h2>
+                    ✉️ お知らせ
+                </h2>
+
+            </header>
+
+
+            <div class="notice-list">
+
+                <article class="notice-card">
+
+                    <div class="notice-card-header">
+
+                        <span class="notice-date">
+                            2026.08
+                        </span>
+
+                        <span class="notice-new">
+                            NEW
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        Cocartlyを開発中です
+                    </h3>
+
+                    <p>
+                        Cocartlyのホーム画面や各機能を、
+                        より使いやすくするために改善しています。
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+                 お出かけチェック
+                 ======================================== -->
+
+        <section id="checkScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackCheck" class="screen-back-button">
+
+                    ← 🏠 ホームへ
+
+                </button>
+
+
+                <div class="screen-title-row">
+
+                    <h2>
+                        🎒 お出かけチェック
+                    </h2>
+
+                    <button type="button" id="btnOutingHelp" class="screen-help-button">
+
+                        使い方
+
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <div class="check-intro-card">
+
+                <h3>
+                    お出かけ前の忘れ物をチェック
+                </h3>
+
+                <p>持っていく物を確認して、準備を進めましょう。購入が必要な物は「購入予定」に追加できます。</p>
+
+            </div>
+
+
+            <div id="outingHelp" class="screen-help-panel" hidden>
+
+                <div class="screen-help-panel-header">
+
+                    <strong>
+                        お出かけチェックの使い方
+                    </strong>
+
+                </div>
+
+
+                <p>
+                    🏠 <strong>家にある物</strong><br>
+                    財布やタオルなど、
+                    購入せずに持っていく物です。
+                    用意できたら「準備済にする」を押します。
+                </p>
+
+
+                <p>
+                    🛒 <strong>購入する物</strong><br>
+                    お出かけまでに買う物です。
+                    登録済みの商品を選んだり、
+                    JANコードから商品を探したりできます。
+                </p>
+
+
+                <p>
+                    <strong>購入予定に追加</strong><br>
+                    購入が必要な物を普段の購入予定と一緒に管理できます。
+                    購入が完了すると、
+                    お出かけ側も準備済になります。
+                </p>
+
+
+                <p>
+                    <strong>準備前・準備済・保留</strong><br>
+                    持ち物の準備状況に合わせて切り替えます。
+                </p>
+
+
+                <p>
+                    <strong>＋追加</strong><br>
+                    忘れていた持ち物や、
+                    新しく購入する物を途中から追加できます。
+                </p>
+
+            </div>
+
+
+            <button type="button" id="btnCreateOuting" class="btn-main">
+
+                ＋ お出かけを作る
+
+            </button>
+
+
+            <section class="check-favorite-section">
+
+
+                <!-- ========================================
+                         お出かけ 表示切替
+                         ======================================== -->
+
+                <div class="outing-list-tabs">
+
+
+                    <button type="button" id="btnOutingUpcoming" class="outing-list-tab active">
+
+                        予定
+
+                        <span id="outingUpcomingCount">
+                            0
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" id="btnOutingRoutine" class="outing-list-tab">
+
+                        いつも使う
+
+                        <span id="outingRoutineCount">
+                            0
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" id="btnOutingPast" class="outing-list-tab">
+
+                        過去
+
+                        <span id="outingPastCount">
+                            0
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+
+                <!-- お出かけ一覧 -->
+
+                <div id="outingList">
+
+                    <p class="check-empty-message">
+                        まだ予定はありません。
+                    </p>
+
+                </div>
+
+
+            </section>
+
+        </section>
+
+        <!-- ========================================
+                 お出かけ作成
+                 ======================================== -->
+
+        <section id="outingCreateScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackOutingCreate" class="screen-back-button">
+
+                    ← 🎒 お出かけチェックへ
+
+                </button>
+
+                <h2>
+                    ＋ お出かけを作る
+                </h2>
+
+            </header>
+
+
+            <div class="outing-create-card">
+
+                <h3>
+                    どんなお出かけですか？
+                </h3>
+
+                <p>
+                    「旅行」「野球観戦」など、
+                    分かりやすい名前を付けてください。
+                </p>
+
+
+                <label for="txtOutingName">
+                    お出かけ名
+                </label>
+
+                <input type="text" id="txtOutingName" placeholder="例：野球観戦">
+
+                <!-- お出かけタイプ -->
+
+                <label for="cmbOutingType">
+                    お出かけの種類
+                </label>
+
+                <select id="cmbOutingType">
+
+                    <option value="scheduled">
+                        1回のお出かけ
+                    </option>
+
+                    <option value="routine">
+                        繰り返し使う
+                    </option>
+
+                </select>
+
+
+                <p class="outing-type-guide">
+
+                    「旅行」「野球観戦」などは1回のお出かけ、
+                    「仕事」「学校」などは繰り返し使うがおすすめです。
+
+                </p>
+
+
+                <!-- 日付 -->
+
+                <div id="outingDateArea">
+
+                    <label for="txtOutingDate">
+                        お出かけ日
+                    </label>
+
+                    <input type="date" id="txtOutingDate">
+
+                </div>
+
+                <label for="txtOutingItemName">
+                    持っていく物
+                </label>
+
+                <input type="text" id="txtOutingItemName" placeholder="例：チケット">
+
+
+                <button type="button" id="btnAddOutingItem" class="btn-main">
+
+                    ＋ 持ち物を追加
+
+                </button>
+
+
+                <div id="outingItemList">
+
+                    <p class="check-empty-message">
+                        まだ持ち物は登録されていません。
+                    </p>
+
+                </div>
+
+
+                <button type="button" id="btnSaveOuting" class="btn-main">
+
+                    保存
+
+                </button>
+
+                <p id="outingCreateMessage" class="shopping-detail-guide">
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+                 お出かけ実行チェック
+                 ======================================== -->
+
+        <section id="outingCheckScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackOutingCheck" class="screen-back-button">
+
+                    ← 🎒 お出かけチェックへ
+
+                </button>
+
+                <h2 id="outingCheckTitle">
+                    お出かけチェック
+                </h2>
+
+            </header>
+
+            <p id="outingCheckDate" class="outing-check-date"></p>
+
+
+            <!-- 状態切替 -->
+
+            <div class="outing-view-tabs">
+
+                <button type="button" id="btnOutingPending" class="outing-view-button active">
+
+                    準備前
+                    <span id="outingPendingCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnOutingReady" class="outing-view-button">
+
+                    準備済
+                    <span id="outingReadyCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnOutingHold" class="outing-view-button">
+
+                    保留
+                    <span id="outingHoldCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnOutingAdd" class="outing-view-button">
+
+                    ＋追加
+
+                </button>
+
+            </div>
+
+
+            <!-- 持ち物一覧 -->
+
+            <div id="outingCheckItemList">
+
+            </div>
+
+            <!-- ========================================
+                     お出かけ終了
+                     ======================================== -->
+
+            <div id="outingCompleteArea" class="outing-complete-area">
+
+                <button type="button" id="btnCompleteOuting" class="btn-main">
+
+                    ✓ お出かけ終了
+
+                </button>
+
+                <p class="outing-complete-guide">
+
+                    終了すると「過去」へ移動します。
+
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+     　　　　　　　過去のお出かけ詳細
+     　　　　　　　======================================== -->
+
+        <section id="outingPastDetailScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackOutingPastDetail" class="screen-back-button">
+
+                    ← 🎒 過去のお出かけへ
+
+                </button>
+
+                <h2 id="outingPastDetailTitle">
+                    過去のお出かけ
+                </h2>
+
+            </header>
+
+
+            <div class="outing-past-detail-card">
+
+                <p id="outingPastDetailDate">
+                </p>
+
+
+                <h3>
+                    持っていった物
+                </h3>
+
+                <div id="outingPastDetailItems">
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- コード読取画面 -->
+        <section id="codeScreen" hidden>
+
+            <header>
+
+                <button id="btnBackCode">
+                    🏠 ホームへ
+                </button>
+
+                <h2>コード読取</h2>
+
+            </header>
+
+            <p>
+
+                バーコードを枠内へ合わせてください。
+
+            </p>
+
+            <div id="cameraArea">
+
+                <video id="cameraVideo" autoplay playsinline>
+
+                </video>
+
+                <!-- バーコード読取ガイド -->
+                <div id="scanFrame">
+
+                    <span class="scanCorner scanCornerTopLeft"></span>
+                    <span class="scanCorner scanCornerTopRight"></span>
+                    <span class="scanCorner scanCornerBottomLeft"></span>
+                    <span class="scanCorner scanCornerBottomRight"></span>
+
+                    <div class="scanLine"></div>
+
+                </div>
+
+                <!-- 読取成功表示 -->
+                <div id="scanSuccess" hidden>
+
+                    <span>✓</span>
+
+                    <p>読み取りました</p>
+
+                </div>
+
+            </div>
+
+            <p id="scanStatus">
+
+                読み取り待機中...
+
+            </p>
+
+            <div class="scanButtons">
+
+                <button id="btnFlash" class="btn-sub">
+                    🔦 ライト
+                </button>
+
+                <button id="btnJanInput" class="btn-sub">
+                    ⌨ JAN入力
+                </button>
+
+                <button id="btnCancelScan" class="btn-sub">
+                    🏠 ホームへ
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- 商品登録画面 -->
+        <section id="productScreen" hidden>
+
+            <header class="screen-title-header">
+
+                <div class="screen-title-row">
+
+                    <h2>
+                        📦 商品登録
+                    </h2>
+
+                    <button type="button" id="btnProductHelp" class="screen-help-button">
+
+                        使い方
+
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- ========================================
+                     商品登録 使い方
+                     ======================================== -->
+
+            <div id="productHelp" class="screen-help-panel" hidden>
+
+                <div class="screen-help-panel-header">
+
+                    <strong>
+                        商品登録について
+                    </strong>
+
+                    <button type="button" id="btnCloseProductHelp" class="screen-help-close">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        この機能でできること
+                    </h3>
+
+                    <p>
+                        商品名・JANコード・商品ジャンル・購入先・内容量などの
+                        商品情報を登録できます。
+                    </p>
+
+                    <p>
+                        登録した商品は、次回以降の買い物で同じバーコードを読み取ると
+                        登録済み商品として認識されます。
+                    </p>
+
+                    <p>
+                        初めての商品を保存すると、
+                        入力した購入先と価格も自動的に購入履歴へ記録されます。
+                    </p>
+
+                    <p>
+                        次回以降はバーコード読取や登録済み商品から
+                        価格を確認し、購入する場合だけ今回の購入内容を記録できます。
+                    </p>
+
+                    <p>
+                        記録された価格は「履歴・価格比較」に自動反映され、
+                        購入先ごとの価格や過去の価格を比較できます。
+                    </p>
+
+                </section>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        こんな時に便利です
+                    </h3>
+
+                    <p>
+                        「この商品は前回いくらだった？」
+                    </p>
+
+                    <p>
+                        「A店とB店ではどちらが安かった？」
+                    </p>
+
+                    <p>
+                        と確認したい時に役立ちます。
+                    </p>
+
+                </section>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        使い方
+                    </h3>
+
+                    <ol>
+
+                        <li>
+                            バーコードがある商品は、
+                            ホームの「コード読取」からバーコードを読み取って登録します。
+                            登録済みの商品は自動で判定されるため、
+                            同じ商品の重複登録を防ぐことができます。
+                        </li>
+
+                        <li>
+                            野菜・惣菜・量り売り商品など、
+                            バーコードがない商品は
+                            「＋商品登録」から商品情報・購入先・価格を入力して保存します。
+                        </li>
+
+                        <li>
+                            次回購入する時は、
+                            バーコードを読み取るか、
+                            登録済み商品の「価格を確認・購入する」から商品を選びます。
+                        </li>
+
+                        <li>
+                            前回価格・最安価格・平均価格や
+                            過去の購入先・価格を確認します。
+                        </li>
+
+                        <li>
+                            購入する場合は「購入する」、
+                            今回買わない場合は
+                            「今回は見送る」を選びます。
+                        </li>
+
+                        <li>
+                            購入する場合は、
+                            購入先・今回価格・数量を入力して
+                            「購入を記録」を押します。
+                        </li>
+
+                        <li>
+                            購入した内容は
+                            「履歴・価格比較」へ自動的に反映されます。
+                        </li>
+
+                    </ol>
+
+                </section>
+
+
+                <button type="button" id="btnCloseProductHelpBottom" class="screen-help-bottom-close">
+
+                    閉じる
+
+                </button>
+
+            </div>
+
+            <!-- 商品名 -->
+            <label for="txtProductName">
+                商品名
+            </label>
+
+            <input type="text" id="txtProductName" placeholder="例：シャンプー">
+
+            <!-- JANコード -->
+            <label for="txtJanCode">
+                JANコード
+            </label>
+
+            <input type="text" id="txtJanCode" inputmode="numeric" maxlength="14" placeholder="バーコード読取時に自動入力" readonly>
+
+            <p class="jan-code-guide">
+                ※ バーコードがある商品は「コード読取」から登録してください。
+            </p>
+
+            <!-- 商品ジャンル -->
+            <label for="cmbCategory">
+                商品ジャンル
+            </label>
+
+            <select id="cmbCategory">
+
+            </select>
+
+            <button type="button" id="btnManageCategories" class="master-manage-button">
+
+                ⚙ 商品ジャンル管理
+
+            </button>
+
+            <!-- 購入先 -->
+            <label for="cmbStore">
+                購入先
+            </label>
+
+            <select id="cmbStore">
+                <option value="">選択してください</option>
+            </select>
+
+            <button type="button" id="btnManageStores" class="master-manage-button">
+
+                🏬 購入先管理
+
+            </button>
+
+            <!-- 内容量 -->
+            <div class="volume-label-row">
+
+                <label for="txtVolume">
+                    内容量
+                </label>
+
+                <button type="button" id="btnVolumeExample" class="input-example-button">
+
+                    入力例
+
+                </button>
+
+            </div>
+
+            <input type="number" id="txtVolume" placeholder="例：400">
+
+            <!-- 内容量・単位 入力例 -->
+            <div id="volumeExample" class="input-example-box" hidden>
+
+                <div class="input-example-header">
+
+                    <strong>
+                        内容量・単位の入力例
+                    </strong>
+
+                    <button type="button" id="btnCloseVolumeExample" class="input-example-close">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+                <p>
+                    🥚 たまご Lサイズ10個<br>
+                    内容量：10 ／ 単位：個
+                </p>
+
+                <p>
+                    🥛 牛乳1000mL<br>
+                    内容量：1000 ／ 単位：mL
+                </p>
+
+                <p>
+                    🍚 お米5kg<br>
+                    内容量：5 ／ 単位：kg
+                </p>
+
+                <p>
+                    🍞 食パン6枚切<br>
+                    内容量：6 ／ 単位：枚
+                </p>
+
+            </div>
+
+            <!-- 単位 -->
+            <label for="cmbUnit">
+                単位
+            </label>
+
+            <select id="cmbUnit">
+
+                <option value="">
+                    選択してください
+                </option>
+
+                <option value="mL">mL</option>
+                <option value="L">L</option>
+
+                <option value="g">g</option>
+                <option value="kg">kg</option>
+
+                <option value="個">個</option>
+                <option value="枚">枚</option>
+                <option value="本">本</option>
+                <option value="袋">袋</option>
+                <option value="箱">箱</option>
+                <option value="パック">パック</option>
+                <option value="ロール">ロール</option>
+
+            </select>
+
+            <!-- 価格（税込） -->
+            <div class="tax-price-label-row">
+
+                <label for="txtPrice">
+                    価格（税込）
+                </label>
+
+                <button type="button" id="btnProductTaxCalc" class="tax-calc-open-button">
+
+                    価格計算
+
+                </button>
+
+            </div>
+
+            <input type="number" id="txtPrice" inputmode="numeric" placeholder="例：298">
+
+
+            <!-- 税抜価格 計算 -->
+            <div id="productTaxCalc" class="tax-calc-panel" hidden>
+
+                <label for="txtProductTaxExcluded">
+                    表示価格
+                </label>
+
+                <div class="tax-price-input-row">
+
+                    <input type="number" id="txtProductTaxExcluded" inputmode="numeric" placeholder="例：198">
+
+                    <span>
+                        円
+                    </span>
+
+                </div>
+
+
+                <label for="cmbProductPriceType">
+                    表示価格の種類
+                </label>
+
+                <select id="cmbProductPriceType">
+
+                    <option value="taxIncluded">
+                        税込
+                    </option>
+
+                    <option value="taxExcluded">
+                        税抜
+                    </option>
+
+                </select>
+
+
+                <label for="cmbProductTaxRate">
+                    税率
+                </label>
+
+                <select id="cmbProductTaxRate">
+
+                    <option value="1">
+                        1％
+                    </option>
+
+                    <option value="8">
+                        8％
+                    </option>
+
+                    <option value="10" selected>
+                        10％
+                    </option>
+
+                </select>
+
+
+                <label for="cmbProductDiscountType">
+                    値引き
+                </label>
+
+                <select id="cmbProductDiscountType">
+
+                    <option value="none">
+                        値引きなし
+                    </option>
+
+                    <option value="percent">
+                        ％OFF
+                    </option>
+
+                    <option value="yen">
+                        円引き
+                    </option>
+
+                </select>
+
+
+                <label for="txtProductDiscountValue">
+                    値引き値
+                </label>
+
+                <input type="number" id="txtProductDiscountValue" inputmode="numeric" min="0" placeholder="例：20">
+
+
+                <p id="productTaxResult" class="tax-calc-result">
+
+                    最終価格：-
+
+                </p>
+
+
+                <div class="tax-calc-buttons">
+
+                    <button type="button" id="btnUseProductTaxPrice" class="tax-calc-use-button">
+
+                        この価格を使用
+
+                    </button>
+
+                    <button type="button" id="btnCloseProductTaxCalc" class="tax-calc-close-button">
+
+                        閉じる
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+            <div class="shareBox">
+
+                <label for="chkShareProduct" class="shareOption">
+
+                    <input type="checkbox" id="chkShareProduct">
+
+                    <span class="shareText">
+
+                        <span class="shareTitle">
+                            Cocartlyの商品マスターへ共有
+                        </span>
+
+                        <span class="shareDescription">
+                            商品名・JANコード・商品ジャンルなどを共有します。
+                            価格や購入先は共有されません。
+                        </span>
+
+                        <span class="shareThanks">
+                            商品情報の充実にご協力いただき、ありがとうございます。
+                        </span>
+
+                    </span>
+
+                </label>
+
+            </div>
+
+            <div class="productButtons">
+
+                <button id="btnSaveProduct" class="btn-main">
+                    保存
+                </button>
+
+                <button id="btnDeletedProducts" class="btn-main">
+                    🗑 削除済みアイテム（0）
+                </button>
+
+                <button id="btnHomeFromProduct" class="btn-main">
+                    🏠 ホームへ
+                </button>
+
+            </div>
+
+            <p id="productMessage"></p>
+
+            <!-- 登録済み商品 -->
+            <h3>登録済み商品</h3>
+
+            <div class="product-filter-row">
+
+                <select id="cmbProductFilterCategory">
+
+                    <option value="">
+                        ジャンル：すべて
+                    </option>
+
+                </select>
+
+                <span id="productFilterCount">
+                    0件
+                </span>
+
+            </div>
+
+            <div id="productList"></div>
+
+        </section>
+
+        <!-- ========================================
+                 購入予定画面
+                 ======================================== -->
+
+        <section id="shoppingScreen" hidden>
+
+            <header>
+
+                <button type="button" id="btnBackShopping">
+                    🏠 ← ホームへ
+                </button>
+
+                <h2>
+                    🛒 購入予定
+                </h2>
+
+            </header>
+
+
+            <!-- ========================================
+                     購入予定 切り替え
+                     ======================================== -->
+
+            <div class="shopping-view-switch">
+
+                <button type="button" id="btnShoppingPending" class="shopping-view-button active">
+
+                    購入前
+                    <span id="shoppingPendingCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnShoppingPurchased" class="shopping-view-button">
+
+                    購入済
+                    <span id="shoppingPurchasedCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnShoppingHold" class="shopping-view-button">
+
+                    保留
+                    <span id="shoppingHoldCount">
+                        0
+                    </span>
+
+                </button>
+
+
+                <button type="button" id="btnShoppingAddView" class="shopping-view-button">
+
+                    ＋追加
+
+                </button>
+
+            </div>
+
+
+            <!-- ========================================
+                     残り商品数
+                     ======================================== -->
+
+            <div id="shoppingRemainingSummary" class="shopping-remaining-summary">
+
+                残り
+                <strong id="shoppingRemainingCount">
+                    0
+                </strong>
+                商品
+
+            </div>
+
+
+            <!-- ========================================
+                     購入予定へ追加
+                     最初は非表示
+                     ======================================== -->
+
+            <div id="shoppingAddArea" class="shopping-add-area" hidden>
+
+                <h3>
+                    購入予定に追加
+                </h3>
+
+                <!-- ========================================
+                         購入予定 商品絞り込み
+                         ======================================== -->
+
+                <div class="shopping-product-filter">
+
+                    <div id="shoppingCategoryTabs" class="shopping-category-tabs">
+
+                        <button type="button" id="btnShoppingFavorite" class="shopping-category-button"
+                            data-shopping-category="favorite">
+
+                            ⭐ よく使う
+
+                        </button>
+
+
+                        <button type="button" id="btnShoppingCategoryAll" class="shopping-category-button active"
+                            data-shopping-category="all">
+
+                            すべて
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <label for="cmbShoppingProduct">
+                    登録済み商品
+                </label>
+
+                <select id="cmbShoppingProduct">
+
+                    <option value="">
+                        商品を選択してください
+                    </option>
+
+                </select>
+
+
+                <p class="shopping-add-or">
+                    または
+                </p>
+
+
+                <label for="txtShoppingNewProductName">
+                    商品名
+                </label>
+
+                <input type="text" id="txtShoppingNewProductName" placeholder="例：キャベツ">
+
+
+                <div class="shopping-add-jan-area">
+
+                    <label for="txtShoppingJanCode">
+                        JANコード（分かる場合）
+                    </label>
+
+                    <input type="text" id="txtShoppingJanCode" inputmode="numeric" maxlength="14"
+                        placeholder="分からない場合は空欄でOK">
+
+                    <button type="button" id="btnScanShoppingJan" class="purchase-jan-scan-button">
+
+                        📷 JANコードを読み取る
+
+                    </button>
+
+                    <small class="purchase-jan-guide">
+                        手入力またはカメラで読み取れます。
+                    </small>
+
+                </div>
+
+                <label for="txtShoppingQuantity">
+                    予定数量
+                </label>
+
+                <input type="number" id="txtShoppingQuantity" min="1" value="1">
+
+
+                <button type="button" id="btnAddShopping" class="btn-main">
+
+                    ＋ 購入予定に追加
+
+                </button>
+
+            </div>
+
+
+            <p id="shoppingMessage"></p>
+
+
+            <!-- ========================================
+                     購入予定の商品一覧
+                     ======================================== -->
+
+            <div id="shoppingList">
+
+            </div>
+
+
+            <!-- ========================================
+                     買い物終了
+                     ======================================== -->
+
+            <button type="button" id="btnFinishShopping" class="btn-main shopping-finish-button">
+
+                買い物終了
+
+            </button>
+
+        </section>
+
+        <!-- ========================================
+                 購入予定 商品詳細画面
+                 ======================================== -->
+
+        <section id="shoppingDetailScreen" hidden>
+
+            <header>
+
+                <button type="button" id="btnBackShoppingDetail">
+
+                    🛒 ← 購入予定へ
+
+                </button>
+
+                <h2>
+                    商品詳細
+                </h2>
+
+            </header>
+
+
+            <div class="shopping-detail-card">
+
+                <h3 id="shoppingDetailProductName">
+                    商品名
+                </h3>
+
+                <p id="shoppingDetailUnregistered" class="shopping-detail-unregistered" hidden>
+
+                    未登録の商品です
+
+                </p>
+
+                <p id="shoppingDetailPreviousStore">
+                    前回購入：記録なし
+                </p>
+
+
+                <p>
+                    購入予定数量：
+                    <strong id="shoppingDetailQuantity">
+                        1
+                    </strong>
+                </p>
+
+                <div id="shoppingDetailJanArea" class="shopping-detail-jan-area" hidden>
+
+                    <label for="txtShoppingDetailJanCode">
+                        JANコード
+                    </label>
+
+                    <input type="text" id="txtShoppingDetailJanCode" inputmode="numeric" maxlength="14"
+                        placeholder="分からない場合は空欄でOK">
+
+                    <button type="button" id="btnSaveShoppingDetailJan">
+
+                        JANコードを保存
+
+                    </button>
+
+                </div>
+
+                <div id="shoppingDetailPriceSummary" class="shopping-detail-price-summary">
+
+                    <div>
+
+                        <small>
+                            前回
+                        </small>
+
+                        <strong id="shoppingDetailLatestPrice">
+                            -
+                        </strong>
+
+                        <small class="shopping-price-tax-label">
+                            税込
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            最安
+                        </small>
+
+                        <strong id="shoppingDetailLowestPrice">
+                            -
+                        </strong>
+
+                        <small class="shopping-price-tax-label">
+                            税込
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            平均
+                        </small>
+
+                        <strong id="shoppingDetailAveragePrice">
+                            -
+                        </strong>
+
+                        <small class="shopping-price-tax-label">
+                            税込
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <p id="shoppingDetailNoHistory" class="shopping-detail-no-history" hidden>
+
+                    購入履歴はまだありません
+
+                </p>
+
+            </div>
+
+
+            <!-- ========================================
+                     店舗・価格情報
+                     後でここへ追加
+                     ======================================== -->
+
+            <div id="shoppingDetailStoreArea" class="shopping-detail-store-area">
+
+                <h3>
+                    今日の店頭情報
+                </h3>
+
+
+                <label for="cmbShoppingDetailStore">
+                    販売店
+                </label>
+
+                <select id="cmbShoppingDetailStore">
+
+                    <option value="">
+                        販売店を選択してください
+                    </option>
+
+                </select>
+
+
+                <label for="cmbShoppingAvailability">
+                    販売状況
+                </label>
+
+                <select id="cmbShoppingAvailability">
+
+                    <option value="available">
+                        ○ 販売あり
+                    </option>
+
+                    <option value="soldout">
+                        △ 品切れ中
+                    </option>
+
+                    <option value="notavailable">
+                        × 取扱なし
+                    </option>
+
+                    <option value="unknown">
+                        ？ 未確認
+                    </option>
+
+                </select>
+
+
+                <div class="tax-price-label-row">
+
+                    <label for="txtShoppingStorePriceTaxExcluded">
+                        税抜価格
+                    </label>
+
+                    <button type="button" id="btnShoppingTaxCalc" class="tax-calc-open-button">
+
+                        価格計算
+
+                    </button>
+
+                </div>
+
+
+                <div class="shopping-store-price-row">
+
+                    <input type="number" id="txtShoppingStorePriceTaxExcluded" inputmode="numeric" min="0"
+                        placeholder="例：398">
+
+                    <span>
+                        円
+                    </span>
+
+                </div>
+
+
+                <!-- 購入予定専用 価格計算 -->
+                <div id="shoppingTaxCalc" class="tax-calc-panel" hidden>
+
+                    <label for="cmbShoppingPriceType">
+                        表示価格の種類
+                    </label>
+
+                    <select id="cmbShoppingPriceType">
+
+                        <option value="taxExcluded">
+                            税抜
+                        </option>
+
+                        <option value="taxIncluded">
+                            税込
+                        </option>
+
+                    </select>
+
+
+                    <label for="cmbShoppingTaxRate">
+                        消費税率
+                    </label>
+
+                    <select id="cmbShoppingTaxRate">
+
+                        <option value="1">
+                            1％
+                        </option>
+
+                        <option value="8">
+                            8％
+                        </option>
+
+                        <option value="10" selected>
+                            10％
+                        </option>
+
+                    </select>
+
+
+                    <label for="cmbShoppingDiscountType">
+                        値引き
+                    </label>
+
+                    <select id="cmbShoppingDiscountType">
+
+                        <option value="none">
+                            値引きなし
+                        </option>
+
+                        <option value="percent">
+                            ％OFF
+                        </option>
+
+                        <option value="yen">
+                            円引き
+                        </option>
+
+                    </select>
+
+
+                    <label for="txtShoppingDiscountValue">
+                        値引き量
+                    </label>
+
+                    <input type="number" id="txtShoppingDiscountValue" inputmode="numeric" min="0" value="0">
+
+
+                    <p id="shoppingTaxResult">
+                    </p>
+
+
+                    <button type="button" id="btnUseShoppingTaxPrice" class="btn-main">
+
+                        この価格を使う
+
+                    </button>
+
+
+                    <button type="button" id="btnCloseShoppingTaxCalc">
+
+                        閉じる
+
+                    </button>
+
+                </div>
+
+
+                <label for="txtShoppingStorePriceTaxIncluded">
+                    税込価格
+                </label>
+
+                <div class="shopping-store-price-row">
+
+                    <input type="number" id="txtShoppingStorePriceTaxIncluded" inputmode="numeric" min="0"
+                        placeholder="分かる場合">
+
+                    <span>
+                        円
+                    </span>
+
+                </div>
+
+
+                <button type="button" id="btnSaveShoppingStoreCheck" class="btn-main">
+
+                    今日の店頭情報を記録
+
+                </button>
+
+
+                <p id="shoppingStoreCheckMessage" class="shopping-detail-guide">
+                </p>
+
+
+                <div id="shoppingStoreCheckList">
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================
+                     購入状態
+                     ======================================== -->
+
+            <div class="shopping-detail-actions">
+
+                <button type="button" id="btnShoppingMarkPurchased" class="btn-main">
+
+                    ✓ 購入した
+
+                </button>
+
+
+                <button type="button" id="btnShoppingMarkHold">
+
+                    一旦保留
+
+                </button>
+
+
+                <button type="button" id="btnShoppingReturnPending">
+
+                    購入前に戻す
+
+                </button>
+
+            </div>
+
+
+            <!-- ========================================
+                  購入予定だけを完全削除
+                  ======================================== -->
+
+            <div class="shopping-detail-delete-area">
+
+                <button type="button" id="btnDeleteShoppingItem" class="shopping-item-delete-button">
+
+                    🗑 購入予定から削除
+
+                </button>
+
+                <p class="shopping-delete-guide">
+                    商品登録や過去の購入履歴は削除されません。
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+                 履歴・価格比較画面
+                 ======================================== -->
+        <section id="historyScreen" hidden>
+
+            <header>
+
+                <button type="button" id="btnBackHistory">
+
+                    🏠 ホームへ
+
+                </button>
+
+                <div class="screen-title-row">
+
+                    <h2>
+                        📊 履歴・価格比較
+                    </h2>
+
+                    <button type="button" id="btnHistoryHelp" class="screen-help-button">
+
+                        使い方
+
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- ========================================
+                     履歴・価格比較 使い方
+                     ======================================== -->
+
+            <div id="historyHelp" class="screen-help-panel" hidden>
+
+                <div class="screen-help-panel-header">
+
+                    <strong>
+                        履歴・価格比較について
+                    </strong>
+
+                    <button type="button" id="btnCloseHistoryHelp" class="screen-help-close">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        この機能でできること
+                    </h3>
+
+                    <p>
+                        購入した商品の価格を、
+                        購入日や商品ごとに確認できます。
+                    </p>
+
+                    <p>
+                        前回価格・最安価格・平均価格や、
+                        購入先ごとの過去の価格を確認できます。
+                    </p>
+
+                    <p>
+                        過去の価格を見ながら、
+                        今回購入するか見送るかの判断にも利用できます。
+                    </p>
+
+                </section>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        こんな時に便利です
+                    </h3>
+
+                    <p>
+                        「前回はいくらだった？」
+                    </p>
+
+                    <p>
+                        「どのお店で安く買えた？」
+                    </p>
+
+                    <p>
+                        「今の価格なら買った方がいい？」
+                    </p>
+
+                    <p>
+                        「価格が上がっているか確認したい」
+                    </p>
+
+                </section>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        使い方
+                    </h3>
+
+                    <ol>
+
+                        <li>
+                            「購入順」または「商品ごと」で
+                            履歴を確認します。
+                        </li>
+
+                        <li>
+                            気になる商品の
+                            「価格を確認・購入する」を押します。
+                        </li>
+
+                        <li>
+                            前回価格・最安価格・平均価格と、
+                            過去の購入先・価格を確認します。
+                        </li>
+
+                        <li>
+                            購入する場合は「購入する」、
+                            今回買わない場合は
+                            「今回は見送る」を選びます。
+                        </li>
+
+                        <li>
+                            購入を記録すると、
+                            新しい価格が履歴・価格比較へ
+                            自動的に追加されます。
+                        </li>
+
+                    </ol>
+
+                </section>
+
+
+                <section class="help-section">
+
+                    <h3>
+                        履歴の管理
+                    </h3>
+
+                    <p>
+                        間違った履歴は編集できます。
+                    </p>
+
+                    <p>
+                        削除した履歴は
+                        「削除済み履歴」から復元できます。
+                    </p>
+
+                    <p>
+                        「完全削除」した履歴は
+                        元に戻せません。
+                    </p>
+
+                </section>
+
+
+                <button type="button" id="btnCloseHistoryHelpBottom" class="screen-help-bottom-close">
+
+                    閉じる
+
+                </button>
+
+            </div>
+
+            <!-- 履歴表示切替 -->
+            <div class="history-view-switch">
+
+                <button type="button" id="btnHistoryByDate" class="history-view-button active">
+
+                    🕒 購入順
+
+                </button>
+
+                <button type="button" id="btnHistoryByProduct" class="history-view-button">
+
+                    📦 商品ごと
+
+                </button>
+
+            </div>
+
+            <button type="button" id="btnDeletedPriceHistory" class="history-deleted-button">
+
+                🗑 削除済み履歴
+
+            </button>
+
+            <div id="historyProductFilter" class="history-product-filter" hidden>
+
+                <select id="cmbHistoryProductCategory">
+
+                    <option value="">
+                        ジャンル：すべて
+                    </option>
+
+                </select>
+
+                <span id="historyProductFilterCount">
+                    0商品
+                </span>
+
+            </div>
+
+            <div id="historyList"></div>
+
+        </section>
+
+        <!-- ========================================
+     　　　　　　  今回価格記録画面
+                 ======================================== -->
+        <section id="priceRecordScreen" hidden>
+
+            <header>
+
+                <header class="purchase-header">
+
+                    <button type="button" id="btnBackPriceRecord" class="purchase-back-button"
+                        onclick="backFromPriceRecord()">
+
+                        ← 商品へ戻る
+
+                    </button>
+
+                    <h2>
+                        🛒 今回の購入
+                    </h2>
+
+                </header>
+
+
+                <!-- 商品情報 -->
+                <div class="purchase-product-card">
+
+                    <strong id="priceRecordProductName">
+                        商品名
+                    </strong>
+
+                    <div class="purchase-previous-price">
+
+                        <span>
+                            前回価格
+                        </span>
+
+                        <strong id="priceRecordPreviousPrice">
+                            記録なし
+                        </strong>
+
+                    </div>
+
+
+                    <!-- JANコード -->
+
+                    <div class="purchase-jan-area">
+
+                        <label for="txtPriceRecordJanCode">
+                            JANコード
+                        </label>
+
+                        <input type="text" id="txtPriceRecordJanCode" inputmode="numeric" maxlength="14"
+                            placeholder="分からない場合は空欄でOK">
+
+
+                        <button type="button" id="btnScanPriceRecordJan" class="purchase-jan-scan-button">
+
+                            📷 JANコードを読み取る
+
+                        </button>
+
+
+                        <small class="purchase-jan-guide">
+                            カメラで読み取るか、帰宅後に入力・変更できます。
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- 購入入力 -->
+                <div class="purchase-input-area">
+
+                    <label for="cmbPriceRecordStore">
+                        購入先
+                    </label>
+
+                    <select id="cmbPriceRecordStore">
+
+                        <option value="">
+                            購入先を選択してください
+                        </option>
+
+                    </select>
+
+                    <button type="button" id="btnManageStoresFromPriceRecord" class="master-manage-button">
+
+                        🏬 購入先管理
+
+                    </button>
+
+
+                    <div class="tax-price-label-row">
+
+                        <label for="txtPriceRecordPrice">
+                            今回価格（税込）
+                        </label>
+
+                        <button type="button" id="btnPurchaseTaxCalc" class="tax-calc-open-button">
+
+                            価格計算
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="purchase-price-input">
+
+                        <input type="number" id="txtPriceRecordPrice" inputmode="numeric" placeholder="例：198">
+
+                        <span>
+                            円
+                        </span>
+
+                    </div>
+
+
+                    <!-- 税抜価格 計算 -->
+                    <div id="purchaseTaxCalc" class="tax-calc-panel" hidden>
+
+                        <label for="txtPurchaseTaxExcluded">
+                            税抜価格
+                        </label>
+
+                        <div class="tax-price-input-row">
+
+                            <input type="number" id="txtPurchaseTaxExcluded" inputmode="numeric" placeholder="例：198">
+
+                            <span>
+                                円
+                            </span>
+
+                        </div>
+
+
+                        <label for="cmbPurchaseTaxRate">
+                            税率
+                        </label>
+
+                        <select id="cmbPurchaseTaxRate">
+
+                            <option value="1">
+                                1％
+                            </option>
+
+                            <option value="8">
+                                8％
+                            </option>
+
+                            <option value="10" selected>
+                                10％
+                            </option>
+
+                        </select>
+
+
+                        <p id="purchaseTaxResult" class="tax-calc-result">
+
+                            税込価格：-
+
+                        </p>
+
+
+                        <div class="tax-calc-buttons">
+
+                            <button type="button" id="btnUsePurchaseTaxPrice" class="tax-calc-use-button">
+
+                                この価格を使用
+
+                            </button>
+
+                            <button type="button" id="btnClosePurchaseTaxCalc" class="tax-calc-close-button">
+
+                                閉じる
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <label for="txtPriceRecordQuantity">
+                        購入数量
+                    </label>
+
+                    <input type="number" id="txtPriceRecordQuantity" min="1" value="1">
+
+                </div>
+
+
+                <button type="button" class="purchase-save-button" onclick="saveCurrentPriceRecord()">
+
+                    購入を記録
+
+                </button>
+
+                <p id="priceRecordMessage"></p>
+
+        </section>
+
+        <!-- 削除済みアイテム画面 -->
+        <section id="deletedProductScreen" class="sub-screen" hidden>
+
+            <header>
+
+                <button id="btnBackProduct">
+                    ← 📦 商品登録へ
+                </button>
+
+                <h2>
+                    🗑 削除済みアイテム
+                </h2>
+
+            </header>
+
+            <div id="deletedProductList">
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+                 設定画面
+                 ======================================== -->
+
+        <section id="settingsScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackSettings" class="screen-back-button">
+
+                    ← 🏠 ホームへ
+
+                </button>
+
+                <h2>
+                    ⚙ 設定
+                </h2>
+
+            </header>
+
+
+            <div class="settings-groups">
+
+
+                <!-- ==================================
+                         管理
+                         ================================== -->
+
+                <section class="settings-group">
+
+                    <h3 class="settings-group-title">
+
+                        管理
+
+                    </h3>
+
+
+                    <div class="settings-menu">
+
+
+                        <button type="button" id="btnCategoryMaster" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                📂
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    商品ジャンル管理
+                                </strong>
+
+                                <small>
+                                    商品登録で使うジャンルを追加・編集します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+
+                        <button type="button" id="btnStoreMaster" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                🏬
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    購入先管理
+                                </strong>
+
+                                <small>
+                                    スーパーやドラッグストアなどの購入先を追加・編集します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==================================
+                         データ
+                         ================================== -->
+
+                <section class="settings-group">
+
+                    <h3 class="settings-group-title">
+
+                        データ
+
+                    </h3>
+
+
+                    <div class="settings-menu">
+
+
+                        <button type="button" id="btnBackupData" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                💾
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    データをバックアップ
+                                </strong>
+
+                                <small>
+                                    機種変更や万一に備えてCocartlyのデータを保存します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+
+                        <button type="button" id="btnRestoreData" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                ♻️
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    バックアップから復元
+                                </strong>
+
+                                <small>
+                                    保存したCocartlyのデータをこの端末に戻します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==================================
+                         アプリ
+                         ================================== -->
+
+                <section class="settings-group">
+
+                    <h3 class="settings-group-title">
+
+                        アプリ
+
+                    </h3>
+
+
+                    <div class="settings-menu">
+
+
+                        <button type="button" id="btnAboutCocartly" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                ℹ️
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    Cocartlyについて
+                                </strong>
+
+                                <small>
+                                    Cocartlyの概要や主な機能を確認します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+
+                        <!-- バージョン -->
+
+                        <div class="settings-version-row">
+
+                            <span class="settings-version-label">
+                                🔖 バージョン
+                            </span>
+
+                            <span class="settings-version-value">
+                                0.9.0
+                            </span>
+
+                        </div>
+
+                        <button type="button" id="btnPrivacyPolicy" class="settings-menu-button">
+
+                            <span class="settings-menu-icon">
+                                🔒
+                            </span>
+
+                            <span class="settings-menu-content">
+
+                                <strong>
+                                    プライバシーポリシー
+                                </strong>
+
+                                <small>
+                                    Cocartlyでのデータの取り扱いについて確認します。
+                                </small>
+
+                            </span>
+
+                            <span class="settings-menu-arrow">
+                                ›
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================
+                 Cocartlyについて
+                 ======================================== -->
+
+        <section id="aboutCocartlyScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackAboutCocartly" class="screen-back-button">
+
+                    ← ⚙️ 設定へ
+
+                </button>
+
+                <h2>
+                    ℹ️ Cocartlyについて
+                </h2>
+
+            </header>
+
+
+            <div class="about-cocartly-card">
+
+                <h3>
+                    🛒 Cocartly
+                </h3>
+
+                <p class="about-cocartly-catch">
+
+                    買い物と持ち物の管理を、
+                    もっと分かりやすく。
+
+                </p>
+
+                <p>
+                    Cocartlyは、商品の登録や購入予定、
+                    購入履歴、価格比較、お出かけ前の
+                    持ち物チェックなどをまとめて管理できる
+                    買い物サポートアプリです。
+                </p>
+
+            </div>
+
+
+            <section class="about-cocartly-section">
+
+                <h3>
+                    主な機能
+                </h3>
+
+                <ul>
+
+                    <li>
+                        商品の登録・管理
+                    </li>
+
+                    <li>
+                        JANコード読み取り
+                    </li>
+
+                    <li>
+                        購入予定の管理
+                    </li>
+
+                    <li>
+                        購入履歴・価格比較
+                    </li>
+
+                    <li>
+                        お出かけチェック
+                    </li>
+
+                    <li>
+                        商品ジャンル・購入先の管理
+                    </li>
+
+                    <li>
+                        データのバックアップ・復元
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="about-cocartly-section">
+
+                <h3>
+                    データについて
+                </h3>
+
+                <p>
+                    Cocartlyのデータは、
+                    この端末のブラウザに保存されます。
+                    機種変更や万一に備えて、
+                    設定から定期的にバックアップしてください。
+                </p>
+
+            </section>
+
+        </section>
+
+        <!-- ========================================
+                 プライバシーポリシー
+                 ======================================== -->
+
+        <section id="privacyPolicyScreen" hidden>
+
+            <header class="screen-header">
+
+                <button type="button" id="btnBackPrivacyPolicy" class="screen-back-button">
+
+                    ← ⚙️ 設定へ
+
+                </button>
+
+                <h2>
+                    🔒 プライバシーポリシー
+                </h2>
+
+            </header>
+
+
+            <div class="privacy-policy-card">
+
+                <p>
+                    Cocartlyでは、利用者のデータを適切に取り扱うことを大切にしています。
+                    このプライバシーポリシーでは、Cocartlyで取り扱う情報と
+                    その利用方法について説明します。
+                </p>
+
+            </div>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    1. 取得・保存する情報
+                </h3>
+
+                <p>
+                    Cocartlyでは、利用者が登録した商品情報、JANコード、
+                    商品ジャンル、購入先、購入予定、購入履歴、価格情報、
+                    お出かけチェックなどのデータを取り扱います。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    2. 利用目的
+                </h3>
+
+                <p>
+                    これらの情報は、商品の管理、購入予定の確認、
+                    購入履歴や価格の比較、お出かけ前の持ち物確認など、
+                    Cocartlyの各機能を提供するために利用します。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    3. 端末内での保存
+                </h3>
+
+                <p>
+                    Cocartlyで登録したデータは、原則として
+                    利用している端末のブラウザ内に保存されます。
+                </p>
+
+                <p>
+                    ブラウザのデータ削除や端末の変更などにより、
+                    保存されたデータが失われる場合があります。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    4. 外部サービスとの通信
+                </h3>
+
+                <p>
+                    JANコードから商品情報を検索するなど、
+                    一部の機能では外部サービスとの通信を行う場合があります。
+                </p>
+
+                <p>
+                    その際、検索に必要なJANコードなどの情報が
+                    外部サービスへ送信される場合があります。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    5. バックアップデータ
+                </h3>
+
+                <p>
+                    「データをバックアップ」を使用すると、
+                    Cocartlyに保存されているデータを
+                    JSON形式のバックアップファイルとして端末に保存できます。
+                </p>
+
+                <p>
+                    バックアップファイルには商品情報、購入履歴、
+                    お出かけ情報などが含まれるため、
+                    利用者自身で適切に保管・管理してください。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    6. アカウント情報
+                </h3>
+
+                <p>
+                    現在のCocartlyにはログイン機能や
+                    ユーザーアカウント機能はありません。
+                </p>
+
+                <p>
+                    そのため、Cocartlyではログイン目的の
+                    メールアドレスやパスワードを登録・保存しません。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    7. アクセス情報
+                </h3>
+
+                <p>
+                    CocartlyをWebサービスとして公開した場合、
+                    サービス提供に必要な通信の過程で、
+                    IPアドレス、ブラウザや端末に関する情報、
+                    アクセス日時などの情報が
+                    ホスティングサービス側で処理される場合があります。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    8. 第三者への提供
+                </h3>
+
+                <p>
+                    Cocartlyでは、法令に基づく場合を除き、
+                    利用者が登録したデータを
+                    運営者が第三者へ販売することはありません。
+                </p>
+
+                <p>
+                    ただし、外部サービスを利用する機能では、
+                    その機能を提供するために必要な情報が
+                    当該サービスへ送信される場合があります。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    9. プライバシーポリシーの変更
+                </h3>
+
+                <p>
+                    Cocartlyの機能追加、サービス内容の変更、
+                    利用する外部サービスの変更などに伴い、
+                    このプライバシーポリシーを変更する場合があります。
+                </p>
+
+            </section>
+
+
+            <section class="privacy-policy-section">
+
+                <h3>
+                    10. お問い合わせ
+                </h3>
+
+                <p>
+                    お問い合わせ方法については、
+                    Cocartlyの正式公開時に案内します。
+                </p>
+
+            </section>
+
+        </section>
+
+        <!-- 商品ジャンル管理画面 -->
+        <section id="categoryScreen" class="master-screen" hidden>
+
+            <header>
+
+                <button id="btnBackCategory">
+
+                    ← 商品登録へ
+
+                </button>
+
+                <h2>商品ジャンル管理</h2>
+
+            </header>
+
+            <div class="master-input-area">
+
+                <label for="txtCategoryName">
+                    商品ジャンル名
+                </label>
+
+                <input type="text" id="txtCategoryName" placeholder="例：食品、飲料、日用品">
+
+                <button type="button" id="btnSaveCategory" class="master-save-button">
+
+                    ＋ 保存
+
+                </button>
+
+            </div>
+
+            <div id="categoryList">
+
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             店舗管理画面
+             ========================================== -->
+
+        <section id="storeScreen" class="master-screen" hidden>
+
+            <header>
+
+                <button id="btnBackStore">
+
+                    ← 商品登録へ
+
+                </button>
+
+                <h2>
+
+                    🏬 購入先管理
+
+                </h2>
+
+            </header>
+
+            <div class="master-input-area">
+
+                <label for="cmbStoreType">
+                    購入先の種類
+                </label>
+
+                <select id="cmbStoreType">
+
+                    <option value="">選択してください</option>
+                    <option value="supermarket">スーパー</option>
+                    <option value="convenience">コンビニ・売店</option>
+                    <option value="drugstore">ドラッグストア</option>
+                    <option value="discount">ディスカウントストア</option>
+                    <option value="warehouse-club">会員制倉庫店</option>
+                    <option value="fixed-price">100円・均一価格店</option>
+                    <option value="home-center">ホームセンター</option>
+                    <option value="department-mall">百貨店・ショッピングモール</option>
+                    <option value="clothing">衣料品店</option>
+                    <option value="electronics">家電量販店</option>
+                    <option value="gas-station">ガソリンスタンド併設店</option>
+                    <option value="specialty">専門店</option>
+                    <option value="online">通販・オンライン</option>
+                    <option value="subscription">定期購入</option>
+                    <option value="vending">自動販売機</option>
+                    <option value="other">その他</option>
+
+                </select>
+
+                <label for="txtStoreName">
+                    購入先名
+                </label>
+
+                <input type="text" id="txtStoreName" placeholder="例：イオン、Amazon">
+
+                <button id="btnSaveStore" class="master-save-button">
+
+                    ＋ 保存
+
+                </button>
+
+            </div>
+
+            <p id="storeMessage"></p>
+
+            <h3>登録済み購入先</h3>
+
+            <div id="storeList"></div>
+
+        </section>
+
+        <!-- ========================================
+                 登録済みJAN確認画面
+                 ======================================== -->
+
+        <section id="registeredJanScreen" hidden>
+
+            <header>
+
+                <button type="button" id="btnCloseRegisteredJan">
+
+                    ← 📦 商品登録へ
+
+                </button>
+
+                <h2>
+                    登録済み商品
+                </h2>
+
+            </header>
+
+
+            <div class="registered-jan-card">
+
+                <h3 id="registeredJanProductName">
+
+                </h3>
+
+                <p id="registeredJanCode" class="registered-jan-code">
+
+                </p>
+
+
+                <div class="registered-price-summary">
+
+                    <div>
+
+                        <span>
+                            前回
+                        </span>
+
+                        <strong id="registeredJanLatestPrice">
+                            -
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            最安
+                        </span>
+
+                        <strong id="registeredJanLowestPrice">
+                            -
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            平均
+                        </span>
+
+                        <strong id="registeredJanAveragePrice">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <h4>
+                    🏬 過去の購入先・価格
+                </h4>
+
+                <div id="registeredJanHistory">
+
+                </div>
+
+
+                <div class="registered-jan-buttons">
+
+                    <button type="button" id="btnRegisteredJanPrice" class="registered-jan-main-button">
+
+                        🛒 購入する（価格を記録）
+
+                    </button>
+
+                    <button type="button" id="btnRegisteredJanSkip" class="registered-jan-skip-button">
+
+                        今回は見送る
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ========================================
+             画面先頭へ戻る
+             ======================================== -->
+
+    <button type="button" id="btnScrollTop" class="scroll-top-button" aria-label="画面の先頭へ戻る" hidden>
+
+        ▲
+
+    </button>
+
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script defer src="js/barcode/code.js"></script>
+    <script defer src="js/barcode/barcode.js"></script>
+    <script defer src="js/barcode/qrcode.js"></script>
+    <script defer src="js/api/productApi.js"></script>
+
+
+</body>
+
+</html>
