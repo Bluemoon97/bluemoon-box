@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cocartly 保存状況確認（読み取り専用）</title><style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:540px;margin:0 auto;padding:20px;line-height:1.6;background:#f7f8fa;color:#17202a}h1{font-size:1.3rem}p{font-size:.92rem}section{background:white;padding:14px;border-radius:12px;margin:12px 0}button{font-size:1rem;padding:12px 18px;border:0;border-radius:10px;background:#165fc1;color:white}table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:9px 4px;border-bottom:1px solid #ddd;text-align:left}td:last-child{text-align:right}small{color:#555}#result{display:none}</style></head>
+<body><h1>Cocartly 保存状況確認</h1><p>このページはブラウザ内の保存データを<strong>読み取るだけ</strong>です。保存・削除・送信・クラウド接続はしません。商品名、購入内容、ユーザーIDも表示しません。</p><p>不具合が起きた<strong>iPhoneのChrome</strong>で、Cocartlyと同じGitHub Pagesサイトから開いてください。</p><button id="check" type="button">保存状況を確認</button><section id="result"><h2 style="font-size:1.1rem">確認結果</h2><table><thead><tr><th>保存先</th><th>購入履歴</th><th>同期記録</th></tr></thead><tbody id="rows"></tbody></table><p id="status"></p><small>「なし」はキーが存在しないこと、「0件」は空配列が保存されていることを表します。「形式不明」は内容を変更せずに件数を判定できなかった状態です。同期記録は購入履歴ドメインのメタデータ件数で、クラウドの実データ件数ではありません。</small></section>
+<script>
+'use strict';
+(function(){
+const KEY='shoppingSupportPriceHistory';
+const META='cocartly-cloud-sync-meta';
+const PREFIX='cocartly:v1:';
+function countArray(raw){if(raw===null)return 'なし';try{const a=JSON.parse(raw);return Array.isArray(a)?a.length+'件':'形式不明';}catch{return '形式不明';}}
+function countMeta(raw){if(raw===null)return 'なし';try{const o=JSON.parse(raw);const r=o&&o.records&&o.records.priceHistory;if(!r)return '0件';return typeof r==='object'?Object.keys(r).length+'件':'形式不明';}catch{return '形式不明';}}
+function addRow(label,history,meta){const tr=document.createElement('tr');[label,history,meta].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});document.getElementById('rows').appendChild(tr);}
+document.getElementById('check').addEventListener('click',()=>{const rows=document.getElementById('rows');rows.textContent='';document.getElementById('result').style.display='block';try{
+addRow('旧・共通',countArray(localStorage.getItem(KEY)),countMeta(localStorage.getItem(META)));
+addRow('ゲスト専用',countArray(localStorage.getItem(PREFIX+'guest:'+KEY)),countMeta(localStorage.getItem(PREFIX+'guest:'+META)));
+const users=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const match=/^cocartly:v1:(user:[0-9a-f-]{36}):/.exec(k);if(match&&!users.includes(match[1]))users.push(match[1]);}
+users.sort();users.forEach((owner,i)=>addRow('ユーザー専用 '+(i+1),countArray(localStorage.getItem(PREFIX+owner+':'+KEY)),countMeta(localStorage.getItem(PREFIX+owner+':'+META))));
+document.getElementById('status').textContent='確認できたユーザー専用領域：'+users.length+'個。ユーザー番号は本人のA/B区分を示すものではありません。';
+}catch(e){document.getElementById('status').textContent='読み取りに失敗しました。ブラウザの保存領域を確認してください。';}
+});
+})();
+</script></body></html>
